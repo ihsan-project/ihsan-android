@@ -18,6 +18,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField 'int', "googleRequestId", google_sso_request_id_token
+        }
+        debug {
+            buildConfigField 'int', "googleRequestId", google_sso_request_id_token
         }
     }
 }

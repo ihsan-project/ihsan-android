@@ -16,7 +16,7 @@ import com.google.android.gms.tasks.Task
 class MainActivity : AppCompatActivity() {
 
     // request code used for logging into google
-    val RC_SIGN_IN: Int = 0
+    val RC_SIGN_IN: Int = BuildConfig.googleRequestId
     lateinit var googleSignInButton: SignInButton
     lateinit var mGoogleSignInClient: GoogleSignInClient
 
@@ -60,6 +60,8 @@ class MainActivity : AppCompatActivity() {
      * check if a user has already signed in in a previous session
      */
     override fun onStart() {
+        super.onStart()
+
         Log.d("MainActivity.kt", "onStart() called")
 
         val account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(this)
@@ -67,8 +69,6 @@ class MainActivity : AppCompatActivity() {
         if (account != null) {
             goToNextScreen()
         }
-
-        super.onStart()
     }
 
 

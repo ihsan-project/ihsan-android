@@ -1,0 +1,5 @@
+# Production grade properties
+# Rename to gradle.properties, and copy to your computer's /Users/<Your Username>/.gradle/ directory
+# https://medium.com/code-better/hiding-api-keys-from-your-android-repository-b23f5598b906
+
+google_sso_request_id_token=<number>
