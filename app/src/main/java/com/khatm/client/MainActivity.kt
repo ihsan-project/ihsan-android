@@ -16,7 +16,7 @@ import com.google.android.gms.tasks.Task
 class MainActivity : AppCompatActivity() {
 
     // request code used for logging into google
-    val RC_SIGN_IN: Int = BuildConfig.googleRequestId
+    val RC_SIGN_IN: Int = BuildConfig.googleRequestClientId
     lateinit var googleSignInButton: SignInButton
     lateinit var mGoogleSignInClient: GoogleSignInClient
 
@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
          */
         val gso: GoogleSignInOptions = GoogleSignInOptions
             .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(BuildConfig.googleServerClientId)
             .requestEmail()
             .build()
 
@@ -105,6 +106,8 @@ class MainActivity : AppCompatActivity() {
      */
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Log.d("MainActivity.kt", "onActivityResult() called")
+
+        Log.d("MainActivity.kt", "mmi: requestCode: $requestCode, resultCode: $resultCode, data: $data")
 
         super.onActivityResult(requestCode, resultCode, data)
 
