@@ -1,10 +1,10 @@
 package com.khatm.client
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -107,8 +107,6 @@ class MainActivity : AppCompatActivity() {
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Log.d("MainActivity.kt", "onActivityResult() called")
 
-        Log.d("MainActivity.kt", "mmi: requestCode: $requestCode, resultCode: $resultCode, data: $data")
-
         super.onActivityResult(requestCode, resultCode, data)
 
         /*
@@ -133,12 +131,15 @@ class MainActivity : AppCompatActivity() {
         try {
             val account: GoogleSignInAccount? = completedTask.getResult(ApiException::class.java)
 
+            Log.d("MainActivity.kt", "mmi: account: $account")
+
             // Signed in successfully
             if (account != null) {
                 goToNextScreen()
             }
         }
         catch (e: ApiException) {
+            Log.e("MainActivity.kt", "mmi: error: $e")
             // The ApiException status code indicates the detailed failure reason.
             Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
         }
