@@ -1,6 +1,7 @@
 # Production grade properties
 # Rename to gradle.properties, and copy to your computer's /Users/<Your Username>/.gradle/ directory
 # https://medium.com/code-better/hiding-api-keys-from-your-android-repository-b23f5598b906
+# The values can be found from the environments from the khatm admin folders
 
 google_sso_request_client_id=<number>
-google_sso_server_client_id=""
+google_sso_web_application_client_id=""

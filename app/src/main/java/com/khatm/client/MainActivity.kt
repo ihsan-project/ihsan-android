@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
          */
         val gso: GoogleSignInOptions = GoogleSignInOptions
             .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(BuildConfig.googleServerClientId)
+            .requestIdToken(BuildConfig.googleWebApplicationClientId)
             .requestEmail()
             .build()
 

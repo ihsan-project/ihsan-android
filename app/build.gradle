@@ -19,11 +19,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField 'int', "googleRequestClientId", google_sso_request_client_id
-            buildConfigField 'String', "googleServerClientId", google_sso_server_client_id
+            buildConfigField 'String', "googleWebApplicationClientId", google_sso_web_application_client_id
         }
         debug {
             buildConfigField 'int', "googleRequestClientId", google_sso_request_client_id
-            buildConfigField 'String', "googleServerClientId", google_sso_server_client_id
+            buildConfigField 'String', "googleWebApplicationClientId", google_sso_web_application_client_id
         }
     }
 }
