@@ -1,4 +1,4 @@
-package com.khatm.client
+package com.khatm.client.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,6 +12,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.khatm.client.BuildConfig
+import com.khatm.client.R
 
 class MainActivity : AppCompatActivity() {
 
