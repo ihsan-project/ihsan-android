@@ -18,13 +18,16 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'int', "googleRequestClientId", google_sso_request_client_id
-            buildConfigField 'String', "googleWebApplicationClientId", google_sso_web_application_client_id
         }
-        debug {
-            buildConfigField 'int', "googleRequestClientId", google_sso_request_client_id
-            buildConfigField 'String', "googleWebApplicationClientId", google_sso_web_application_client_id
-        }
+    }
+
+    // Load local.properties
+    buildTypes.each {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+
+        it.buildConfigField 'int', "googleRequestClientId", properties.getProperty("google_sso_request_client_id", "")
+        it.buildConfigField 'String', "googleWebApplicationClientId", properties.getProperty("google_sso_web_application_client_id", "")
     }
 }
 

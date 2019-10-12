@@ -2,4 +2,4 @@
 
 ## Setup Environment
 
-1. Follow instructions in `gradle.properties.prod` to setup local environments
+1. Follow instructions in `local.properties.copy` to setup local environments
