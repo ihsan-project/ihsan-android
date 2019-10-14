@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -14,27 +15,25 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.khatm.client.BuildConfig
 import com.khatm.client.R
+import com.khatm.client.viewmodels.FirstViewModel
 
 class MainActivity : AppCompatActivity() {
 
-    // request code used for logging into google
+    private lateinit var firstViewModel: FirstViewModel
+
     val RC_SIGN_IN: Int = BuildConfig.googleRequestClientId
     lateinit var googleSignInButton: SignInButton
     lateinit var mGoogleSignInClient: GoogleSignInClient
 
 
-    /*
-     * called when the activity starts
-     *
-     * initialize objects
-     */
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d("MainActivity.kt", "onCreate() called")
-
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
+        firstViewModel = ViewModelProviders.of(this).get(FirstViewModel::class.java)
+
+        setContentView(R.layout.activity_main)
         googleSignInButton = findViewById(R.id.button_sign_in_google)
+        googleSignInButton.setOnClickListener { signInGoogle() }
 
         /*
          * Configure sign-in to request the user's ID, email address, and basic profile.
@@ -48,20 +47,8 @@ class MainActivity : AppCompatActivity() {
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
-
-        googleSignInButton.setOnClickListener { signInGoogle() }
     }
 
-
-    /*
-     * When activity start getting visible to user then onStart() will be called.
-     *
-     * If the activity is in onPause() condition (not visible to user),
-     * and if user again launch the activity,
-     * then onStart() method will be called.
-     *
-     * check if a user has already signed in in a previous session
-     */
     override fun onStart() {
         super.onStart()
 
