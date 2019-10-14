@@ -6,14 +6,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
-import com.khatm.client.BuildConfig
 import com.khatm.client.R
 import com.khatm.client.viewmodels.FirstViewModel
 
@@ -21,104 +15,40 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var firstViewModel: FirstViewModel
 
-    val RC_SIGN_IN: Int = BuildConfig.googleRequestClientId
     lateinit var googleSignInButton: SignInButton
-    lateinit var mGoogleSignInClient: GoogleSignInClient
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         firstViewModel = ViewModelProviders.of(this).get(FirstViewModel::class.java)
+        firstViewModel.setupGoogleClientFor(this)
 
         setContentView(R.layout.activity_main)
         googleSignInButton = findViewById(R.id.button_sign_in_google)
-        googleSignInButton.setOnClickListener { signInGoogle() }
-
-        /*
-         * Configure sign-in to request the user's ID, email address, and basic profile.
-         * ID and basic profile are included in DEFAULT_SIGN_IN.
-         */
-        val gso: GoogleSignInOptions = GoogleSignInOptions
-            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(BuildConfig.googleWebApplicationClientId)
-            .requestEmail()
-            .build()
-
-        // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+        googleSignInButton.setOnClickListener { signInGoogleAction() }
     }
 
     override fun onStart() {
         super.onStart()
 
-        Log.d("MainActivity.kt", "onStart() called")
-
-        val account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(this)
-
-        if (account != null) {
+        if (firstViewModel.isLoggedIn) {
+            Log.d("MainActivity.kt", "Is logged in")
             goToNextScreen()
         }
     }
 
-
-    /*
-     * attempt to sign into a google account if not already signed in
-     *
-     * handle sign-in button taps by creating a sign-in intent with the getSignInIntent method,
-     * and starting the intent with startActivityForResult.
-     */
-    private fun signInGoogle() {
-        Log.d("MainActivity.kt", "signInGoogle() called")
-
-        // Check for existing Google Sign In account, if the user is already signed in the GoogleSignInAccount will be non-null.
-        val account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(this)
-
-        // Signed in successfully
-        if (account != null){
-            goToNextScreen()
-        }
-        else {
-            // attempt to let the user log into a google account
-            val signInIntent: Intent = mGoogleSignInClient.signInIntent
-            startActivityForResult(signInIntent, RC_SIGN_IN)
-        }
+    private fun signInGoogleAction() {
+        startActivityForResult(firstViewModel.signInIntent, firstViewModel.authUUID)
     }
 
-
-    /*
-     * Starting the intent prompts the user to select a Google account to sign in with.
-     * If requested scopes beyond profile, email, and openid, the user is also prompted to grant access to the requested resources
-     *
-     * When the user interacts with the activity started by the explicit intent from startActivityForResult() in
-     * the googleSignIn() function, it will pass back a result that will be captured by this function
-     */
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Log.d("MainActivity.kt", "onActivityResult() called")
 
         super.onActivityResult(requestCode, resultCode, data)
 
-        /*
-         * After the user signs in, can get a GoogleSignInAccount object for the user in the activity's onActivityResult method.
-         * Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-         */
-        if (requestCode == RC_SIGN_IN) {
-            // The Task returned from this call is always completed, so no need to attach a listener.
-            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
-            handleSignInResult(task)
-        }
-    }
-
-
-    /*
-     * Called after the user allows a sign in attempt so we can validate if the user was successfully
-     * able to log in in order to go to the home screen
-     */
-    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
-        Log.d("MainActivity.kt", "handleSignInResult() called")
-
         try {
-            val account: GoogleSignInAccount? = completedTask.getResult(ApiException::class.java)
+            val account = firstViewModel.googleAccount(data, requestCode)
 
             Log.d("MainActivity.kt", "mmi: account: $account")
 
@@ -135,9 +65,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    /*
-     * function used to go from the login screen to the home screen
-     */
     private fun goToNextScreen() {
         Log.d("MainActivity.kt", "goToNextScreen() called")
 
