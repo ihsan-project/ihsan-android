@@ -6,10 +6,17 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.khatm.client.R
 import com.khatm.client.viewmodels.FirstViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,8 +46,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun signInGoogleAction() {
-        startActivityForResult(firstViewModel.signInIntent, firstViewModel.authUUID)
+        runBlocking {
+            val account = googleSigninFlow()
+
+            if (account != null) {
+                goToNextScreen()
+            }
+        }
     }
+
+    suspend fun googleSigninFlow(): GoogleSignInAccount? {
+        return suspendCoroutine<GoogleSignInAccount> { continuation ->
+            startActivityForResult(firstViewModel.signInIntent, firstViewModel.authUUID)
+
+            googleSigninAccountContinuation = continuation
+        }
+    }
+
+    var googleSigninAccountContinuation: Continuation<GoogleSignInAccount>? = null
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Log.d("MainActivity.kt", "onActivityResult() called")
@@ -53,8 +76,9 @@ class MainActivity : AppCompatActivity() {
             Log.d("MainActivity.kt", "mmi: account: $account")
 
             // Signed in successfully
-            if (account != null) {
-                goToNextScreen()
+            if (account != null &&
+                googleSigninAccountContinuation != null) {
+                (googleSigninAccountContinuation as Continuation<GoogleSignInAccount>).resume(account)
             }
         }
         catch (e: ApiException) {
