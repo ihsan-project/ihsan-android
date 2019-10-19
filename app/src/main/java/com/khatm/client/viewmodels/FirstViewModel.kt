@@ -27,8 +27,7 @@ class FirstViewModel : ViewModel() {
     private val scope = CoroutineScope(coroutineContext)
     private val repository : UserRepository = UserRepository(ApiFactory.khatmApi)
 
-    val RC_SIGN_IN: Int = BuildConfig.googleRequestClientId
-    lateinit var googleSignInButton: SignInButton
+    val RC_SIGN_IN: Int = BuildConfig.googleRequestClientId // Get rid of this
     lateinit var mGoogleSignInClient: GoogleSignInClient
     lateinit var activity: AppCompatActivity
 
@@ -42,12 +41,6 @@ class FirstViewModel : ViewModel() {
     val signInIntent: Intent
         get() {
             return mGoogleSignInClient.signInIntent
-        }
-
-    val authUUID: Int
-        get() {
-            // TODO: Randomly generate number and hold it in state each time logging in
-            return RC_SIGN_IN
         }
 
     fun setupGoogleClientFor(loginActivity: AppCompatActivity) {
@@ -70,13 +63,9 @@ class FirstViewModel : ViewModel() {
      * After the user signs in, can get a GoogleSignInAccount object for the user in the activity's onActivityResult method.
      * Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
      */
-    fun googleAccount(data: Intent?, requestCode: Int): GoogleSignInAccount? {
-        if (requestCode == authUUID) {
-            return GoogleSignIn.getSignedInAccountFromIntent(data).getResult(
-                    ApiException::class.java)
-        }
-
-        return null
+    fun googleAccount(data: Intent): GoogleSignInAccount? {
+        return GoogleSignIn.getSignedInAccountFromIntent(data).getResult(
+                ApiException::class.java)
     }
 
     fun authenticate() {

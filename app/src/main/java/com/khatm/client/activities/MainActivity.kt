@@ -4,21 +4,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.khatm.client.R
+import com.khatm.client.extensions.AsyncActivity
 import com.khatm.client.viewmodels.FirstViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AsyncActivity() {
 
     private lateinit var firstViewModel: FirstViewModel
 
@@ -46,45 +43,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun signInGoogleAction() {
-        runBlocking {
-            val account = googleSigninFlow()
+        GlobalScope.launch(Dispatchers.Main) {
+            val result = launchIntentAsync(firstViewModel.signInIntent).await()
 
-            if (account != null) {
-                goToNextScreen()
+            result?.data?.let {
+                try {
+                    val account = firstViewModel.googleAccount(it)
+
+                    if (account != null) {
+                        goToNextScreen()
+                    } else {}
+                }
+                catch (e: ApiException) {
+                    Toast.makeText(this@MainActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
+                }
             }
-        }
-    }
-
-    suspend fun googleSigninFlow(): GoogleSignInAccount? {
-        return suspendCoroutine<GoogleSignInAccount> { continuation ->
-            startActivityForResult(firstViewModel.signInIntent, firstViewModel.authUUID)
-
-            googleSigninAccountContinuation = continuation
-        }
-    }
-
-    var googleSigninAccountContinuation: Continuation<GoogleSignInAccount>? = null
-
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Log.d("MainActivity.kt", "onActivityResult() called")
-
-        super.onActivityResult(requestCode, resultCode, data)
-
-        try {
-            val account = firstViewModel.googleAccount(data, requestCode)
-
-            Log.d("MainActivity.kt", "mmi: account: $account")
-
-            // Signed in successfully
-            if (account != null &&
-                googleSigninAccountContinuation != null) {
-                (googleSigninAccountContinuation as Continuation<GoogleSignInAccount>).resume(account)
-            }
-        }
-        catch (e: ApiException) {
-            Log.e("MainActivity.kt", "mmi: error: $e")
-            // The ApiException status code indicates the detailed failure reason.
-            Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
         }
     }
 
