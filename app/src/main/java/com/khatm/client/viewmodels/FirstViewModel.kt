@@ -27,7 +27,6 @@ class FirstViewModel : ViewModel() {
     private val scope = CoroutineScope(coroutineContext)
     private val repository : UserRepository = UserRepository(ApiFactory.khatmApi)
 
-    val RC_SIGN_IN: Int = BuildConfig.googleRequestClientId // Get rid of this
     lateinit var mGoogleSignInClient: GoogleSignInClient
     lateinit var activity: AppCompatActivity
 
