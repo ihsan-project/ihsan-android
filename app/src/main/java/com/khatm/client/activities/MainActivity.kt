@@ -50,6 +50,10 @@ class MainActivity : AsyncActivity() {
                 try {
                     val account = firstViewModel.googleAccount(it)
 
+                    val token = firstViewModel.authenticateAsync(this@MainActivity).await()
+
+                    Log.d("MainActivity.kt", "Is logged in " + token)
+
                     if (account != null) {
                         goToNextScreen()
                     } else {}

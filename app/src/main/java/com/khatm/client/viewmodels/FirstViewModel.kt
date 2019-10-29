@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -67,11 +68,19 @@ class FirstViewModel : ViewModel() {
                 ApiException::class.java)
     }
 
-    fun authenticate() {
+    fun authenticateAsync(activity: AppCompatActivity) : Deferred<String?> {
+        val apiResult = CompletableDeferred<String?>()
+
         scope.launch {
-            val authentication = repository.getAuthentication()
+            val authentication = repository.getAuthentication("monkey", "butt@butt.com", "poop")
             userLiveData.postValue(authentication)
         }
+
+        userLiveData.observe(activity, Observer {
+            apiResult.complete("monkey")
+        })
+
+        return apiResult
     }
 
     fun cancelAllRequests() = coroutineContext.cancel()

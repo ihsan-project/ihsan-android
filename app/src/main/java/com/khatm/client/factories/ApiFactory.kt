@@ -33,7 +33,7 @@ object ApiFactory {
 
     val retrofit : Retrofit = Retrofit.Builder()
         .client(tmdbClient)
-        .baseUrl("http://localhost:3000/")
+        .baseUrl("https://8489d89a.ngrok.io/")
         .addConverterFactory(MoshiConverterFactory.create())
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()
