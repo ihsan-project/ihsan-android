@@ -21,7 +21,7 @@ import com.khatm.client.repositories.UserRepository
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class FirstViewModel : ViewModel() {
+class AuthenticateViewModel : ViewModel() {
 
     private val parentJob = Job()
     private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Default

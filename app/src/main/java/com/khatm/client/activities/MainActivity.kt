@@ -9,15 +9,14 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.khatm.client.R
 import com.khatm.client.extensions.AsyncActivity
-import com.khatm.client.viewmodels.FirstViewModel
+import com.khatm.client.viewmodels.AuthenticateViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class MainActivity : AsyncActivity() {
 
-    private lateinit var firstViewModel: FirstViewModel
+    private lateinit var firstViewModel: AuthenticateViewModel
 
     lateinit var googleSignInButton: SignInButton
 
@@ -25,12 +24,14 @@ class MainActivity : AsyncActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        firstViewModel = ViewModelProviders.of(this).get(FirstViewModel::class.java)
+        firstViewModel = ViewModelProviders.of(this).get(AuthenticateViewModel::class.java)
         firstViewModel.setupGoogleClientFor(this)
 
         setContentView(R.layout.activity_main)
         googleSignInButton = findViewById(R.id.button_sign_in_google)
-        googleSignInButton.setOnClickListener { signInGoogleAction() }
+        googleSignInButton.setOnClickListener {
+            signInGoogleAction()
+        }
     }
 
     override fun onStart() {
