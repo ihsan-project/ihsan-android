@@ -40,13 +40,14 @@ class HomeActivity : AppCompatActivity() {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
-        signOutButton.setOnClickListener { signOut() }
+        signOutButton.setOnClickListener {
+            signOut()
+        }
 
         val account : GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(this)
 
         // if there is a signed in account
         if (account != null) {
-
             val name = account.displayName
             val email = account.email
             val id = account.id

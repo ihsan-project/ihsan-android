@@ -8,7 +8,7 @@ import org.json.JSONObject
 
 class UserRepository(private val api : KhatmApi) : Repository() {
 
-    suspend fun getAuthentication(uuid: String, email: String, firstName: String) : User? {
+    suspend fun getAuthentication(uuid: String?, email: String?, firstName: String?) : User? {
 
         val json = JSONObject()
         json.put("email", email)

@@ -59,21 +59,18 @@ class AuthenticateViewModel : ViewModel() {
         activity = loginActivity
     }
 
-    /*
-     * After the user signs in, can get a GoogleSignInAccount object for the user in the activity's onActivityResult method.
-     * Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-     */
-    fun googleAccount(data: Intent): GoogleSignInAccount? {
-        return GoogleSignIn.getSignedInAccountFromIntent(data).getResult(
-                ApiException::class.java)
-    }
 
-    fun authenticateAsync(activity: AppCompatActivity) : Deferred<User?> {
+    fun authenticateAsync(googleAuthData: Intent) : Deferred<User?> {
         val apiResult = CompletableDeferred<User?>()
 
         scope.launch {
-            val authentication = repository.getAuthentication("monkey", "butt@butt.com", "poop")
-            userLiveData.postValue(authentication)
+            val googleAccount = GoogleSignIn.getSignedInAccountFromIntent(googleAuthData).getResult(
+                ApiException::class.java)
+
+            googleAccount?.let {
+                val authentication = repository.getAuthentication(it.id, it.email, it.displayName)
+                userLiveData.postValue(authentication)
+            }
         }
 
         userLiveData.observe(activity, Observer {

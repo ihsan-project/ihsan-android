@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AsyncActivity() {
 
-    private lateinit var firstViewModel: AuthenticateViewModel
+    private lateinit var authViewModel: AuthenticateViewModel
 
     lateinit var googleSignInButton: SignInButton
 
@@ -24,8 +24,8 @@ class MainActivity : AsyncActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        firstViewModel = ViewModelProviders.of(this).get(AuthenticateViewModel::class.java)
-        firstViewModel.setupGoogleClientFor(this)
+        authViewModel = ViewModelProviders.of(this).get(AuthenticateViewModel::class.java)
+        authViewModel.setupGoogleClientFor(this)
 
         setContentView(R.layout.activity_main)
         googleSignInButton = findViewById(R.id.button_sign_in_google)
@@ -37,7 +37,7 @@ class MainActivity : AsyncActivity() {
     override fun onStart() {
         super.onStart()
 
-        if (firstViewModel.isLoggedIn) {
+        if (authViewModel.isLoggedIn) {
             Log.d("MainActivity.kt", "Is logged in")
             goToNextScreen()
         }
@@ -45,17 +45,15 @@ class MainActivity : AsyncActivity() {
 
     private fun signInGoogleAction() {
         GlobalScope.launch(Dispatchers.Main) {
-            val result = launchIntentAsync(firstViewModel.signInIntent).await()
+            val result = launchIntentAsync(authViewModel.signInIntent).await()
 
             result?.data?.let {
                 try {
-                    val account = firstViewModel.googleAccount(it)
-
-                    val user = firstViewModel.authenticateAsync(this@MainActivity).await()
+                    val user = authViewModel.authenticateAsync(it).await()
 
                     Log.d("MainActivity.kt", "User access token: " + user?.access)
 
-                    if (account != null) {
+                    if (user?.access != null) {
                         goToNextScreen()
                     }
                 }
