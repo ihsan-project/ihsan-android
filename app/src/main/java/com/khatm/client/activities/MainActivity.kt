@@ -50,13 +50,13 @@ class MainActivity : AsyncActivity() {
                 try {
                     val account = firstViewModel.googleAccount(it)
 
-                    val token = firstViewModel.authenticateAsync(this@MainActivity).await()
+                    val user = firstViewModel.authenticateAsync(this@MainActivity).await()
 
-                    Log.d("MainActivity.kt", "Is logged in " + token)
+                    Log.d("MainActivity.kt", "User access token: " + user?.access)
 
                     if (account != null) {
                         goToNextScreen()
-                    } else {}
+                    }
                 }
                 catch (e: ApiException) {
                     Toast.makeText(this@MainActivity, "Failed: $e", Toast.LENGTH_SHORT).show()

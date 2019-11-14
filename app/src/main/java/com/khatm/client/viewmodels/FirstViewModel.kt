@@ -68,8 +68,8 @@ class FirstViewModel : ViewModel() {
                 ApiException::class.java)
     }
 
-    fun authenticateAsync(activity: AppCompatActivity) : Deferred<String?> {
-        val apiResult = CompletableDeferred<String?>()
+    fun authenticateAsync(activity: AppCompatActivity) : Deferred<User?> {
+        val apiResult = CompletableDeferred<User?>()
 
         scope.launch {
             val authentication = repository.getAuthentication("monkey", "butt@butt.com", "poop")
@@ -77,7 +77,7 @@ class FirstViewModel : ViewModel() {
         }
 
         userLiveData.observe(activity, Observer {
-            apiResult.complete("monkey")
+            apiResult.complete(it)
         })
 
         return apiResult
