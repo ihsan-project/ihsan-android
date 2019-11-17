@@ -10,6 +10,7 @@ class UserRepository(private val api : KhatmApi) : Repository() {
 
     suspend fun getAuthentication(uuid: String?, email: String?, firstName: String?) : User? {
 
+        // TODO: Create a serializer in User model class to help with this
         val json = JSONObject()
         json.put("email", email)
         json.put("uuid", uuid)
@@ -18,7 +19,7 @@ class UserRepository(private val api : KhatmApi) : Repository() {
         val requestBody: RequestBody = RequestBody.create(MediaType.parse("application/json"), json.toString())
 
         val response = safeApiCall(
-            call = { api.getAuthentication(requestBody).await() },
+            call = { api.getAuthenticationAsync(requestBody).await() },
             errorMessage = "Error Fetching Authentication"
         )
 

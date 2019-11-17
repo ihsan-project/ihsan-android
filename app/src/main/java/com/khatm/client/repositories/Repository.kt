@@ -4,6 +4,7 @@ import android.util.Log
 import retrofit2.Response
 import java.io.IOException
 
+
 open class Repository {
 
     suspend fun <T : Any> safeApiCall(call: suspend () -> Response<T>, errorMessage: String): T? {
