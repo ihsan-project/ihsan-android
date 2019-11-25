@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
@@ -37,10 +38,11 @@ class MainActivity : AsyncActivity() {
     override fun onStart() {
         super.onStart()
 
-        if (authViewModel.isLoggedIn) {
-            Log.d("MainActivity.kt", "Is logged in")
-            goToNextScreen()
-        }
+        authViewModel.repository.authenticatedUser?.observe(this, Observer {
+            if (it.access.isNotBlank()) {
+                goToNextScreen()
+            }
+        })
     }
 
     private fun signInGoogleAction() {

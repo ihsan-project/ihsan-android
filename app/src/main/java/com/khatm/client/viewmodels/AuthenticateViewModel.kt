@@ -2,18 +2,14 @@ package com.khatm.client.viewmodels
 
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
 import com.khatm.client.ApiFactory
 import com.khatm.client.BuildConfig
 import com.khatm.client.models.User
@@ -32,11 +28,6 @@ class AuthenticateViewModel() : ViewModel() {
     lateinit var activity: AppCompatActivity
 
     val userLiveData = MutableLiveData<User>()
-
-    val isLoggedIn: Boolean
-        get() {
-            return GoogleSignIn.getLastSignedInAccount(activity) != null
-        }
 
     val signInIntent: Intent
         get() {

@@ -2,6 +2,7 @@ package com.khatm.client.repositories
 
 import android.app.Application
 import android.util.Log
+import androidx.lifecycle.LiveData
 import com.khatm.client.models.KhatmApi
 import com.khatm.client.models.User
 import okhttp3.MediaType
@@ -38,6 +39,11 @@ class UserRepository(private val application : Application, private val api : Kh
 
         return response;
     }
+
+    val authenticatedUser: LiveData<User>?
+        get() {
+            return userDao?.authenticatedUser
+        }
 
     fun insert(user : User) {
         LocalDatabase.databaseWriteExecutor.execute {

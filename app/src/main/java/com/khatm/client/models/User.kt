@@ -1,5 +1,6 @@
 package com.khatm.client.models
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import kotlinx.coroutines.Deferred
 import okhttp3.RequestBody
@@ -12,7 +13,6 @@ import retrofit2.http.POST
 data class User(
     @PrimaryKey val id: Int,
     @ColumnInfo val first_name: String,
-    @ColumnInfo val last_name: String,
     @ColumnInfo val email: String,
     @ColumnInfo val access: String
 )
@@ -25,11 +25,9 @@ interface KhatmApi {
 @Dao
 interface UserDao {
 
-//    @get:Query("SELECT * from user_table ORDER BY word ASC")
-//    val alphabetizedWords: List<Word>
+    @get:Query("SELECT * from user WHERE access IS NOT NULL")
+    val authenticatedUser: LiveData<User>
 
-    // allowing the insert of the same word multiple times by passing a
-    // conflict resolution strategy
     @Insert
     fun insert(user: User)
 
