@@ -51,13 +51,14 @@ class MainActivity : AsyncActivity() {
                 try {
                     val user = authViewModel.authenticateAsync(it).await()
 
-                    Log.d("MainActivity.kt", "User access token: " + user?.access)
+                    Log.d("MainActivity.kt", "user: $user")
 
                     if (user?.access != null) {
                         goToNextScreen()
                     }
                 }
                 catch (e: ApiException) {
+                    Log.d("MainActivity.kt", "Failed: $e")
                     Toast.makeText(this@MainActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
                 }
             }

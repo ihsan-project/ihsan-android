@@ -17,7 +17,7 @@ open class Repository {
                 data = result.data
             is Result.Error -> {
                 // TODO: If 404 then log user out
-                Log.d("Repository", "$errorMessage & Exception - ${result.exception}")
+                Log.e("Repository", "$errorMessage; ${result.exception}")
             }
         }
 
@@ -30,7 +30,7 @@ open class Repository {
             return Result.Success(response.body()!!)
         }
 
-        return Result.Error(IOException("Error Occurred during getting safe Api result, Custom ERROR - $errorMessage"))
+        return Result.Error(IOException("API Error - $errorMessage"))
     }
 }
 

@@ -1,5 +1,6 @@
 package com.khatm.client.repositories
 
+import android.util.Log
 import com.khatm.client.models.KhatmApi
 import com.khatm.client.models.User
 import okhttp3.MediaType
@@ -17,6 +18,8 @@ class UserRepository(private val api : KhatmApi) : Repository() {
         json.put("first_name", firstName)
         json.put("platform", 1)
         val requestBody: RequestBody = RequestBody.create(MediaType.parse("application/json"), json.toString())
+
+        Log.d("UserRepository", "Get Authentication $email")
 
         val response = safeApiCall(
             call = { api.getAuthenticationAsync(requestBody).await() },

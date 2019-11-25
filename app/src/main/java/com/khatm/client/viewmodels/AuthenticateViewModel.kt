@@ -67,6 +67,8 @@ class AuthenticateViewModel : ViewModel() {
 
         scope.launch {
             googleAccount?.let {
+                Log.d("AuthenticateViewModel", "Authenticate API ${it.email}")
+
                 val authentication = repository.getAuthentication(it.id, it.email, it.displayName)
                 userLiveData.postValue(authentication)
             }
