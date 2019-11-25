@@ -33,6 +33,6 @@ interface UserDao {
     @Insert
     fun insert(user: User)
 
-    @Query("DELETE FROM user_table")
+    @Query("DELETE FROM user")
     fun deleteAll()
 }

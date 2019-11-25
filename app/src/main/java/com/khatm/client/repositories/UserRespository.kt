@@ -1,13 +1,23 @@
 package com.khatm.client.repositories
 
+import android.app.Application
 import android.util.Log
 import com.khatm.client.models.KhatmApi
 import com.khatm.client.models.User
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import org.json.JSONObject
+import com.khatm.client.models.UserDao
+import com.khatm.client.models.LocalDatabase
 
-class UserRepository(private val api : KhatmApi) : Repository() {
+
+class UserRepository(private val application : Application, private val api : KhatmApi) : Repository() {
+    private val userDao: UserDao?
+
+    init {
+        val db = LocalDatabase.getDatabase(application)
+        userDao = db?.userDao()
+    }
 
     suspend fun getAuthentication(uuid: String?, email: String?, firstName: String?) : User? {
 
@@ -27,6 +37,12 @@ class UserRepository(private val api : KhatmApi) : Repository() {
         )
 
         return response;
+    }
+
+    fun insert(user : User) {
+        LocalDatabase.databaseWriteExecutor.execute {
+            userDao?.insert(user)
+        }
     }
 
 }

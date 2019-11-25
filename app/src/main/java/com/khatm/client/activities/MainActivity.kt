@@ -54,6 +54,8 @@ class MainActivity : AsyncActivity() {
                     Log.d("MainActivity.kt", "user: $user")
 
                     if (user?.access != null) {
+                        authViewModel.save(user)
+
                         goToNextScreen()
                     }
                 }

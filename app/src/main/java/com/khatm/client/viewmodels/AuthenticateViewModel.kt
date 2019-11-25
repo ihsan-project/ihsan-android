@@ -21,13 +21,13 @@ import com.khatm.client.repositories.UserRepository
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class AuthenticateViewModel : ViewModel() {
+class AuthenticateViewModel() : ViewModel() {
 
     private val parentJob = Job()
     private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Default
     private val scope = CoroutineScope(coroutineContext)
-    private val repository : UserRepository = UserRepository(ApiFactory.khatmApi)
 
+    lateinit var repository : UserRepository
     lateinit var mGoogleSignInClient: GoogleSignInClient
     lateinit var activity: AppCompatActivity
 
@@ -57,6 +57,7 @@ class AuthenticateViewModel : ViewModel() {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(loginActivity, gso)
         activity = loginActivity
+        repository = UserRepository(activity.application, ApiFactory.khatmApi)
     }
 
 
@@ -79,6 +80,10 @@ class AuthenticateViewModel : ViewModel() {
         })
 
         return apiResult
+    }
+
+    fun save(user: User) {
+        repository.insert(user)
     }
 
     fun cancelAllRequests() = coroutineContext.cancel()

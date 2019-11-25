@@ -25,7 +25,7 @@ abstract class LocalDatabase : RoomDatabase() {
                     if (INSTANCE == null) {
                         INSTANCE = Room.databaseBuilder(
                             context.getApplicationContext(),
-                            LocalDatabase::class.java, "word_database"
+                            LocalDatabase::class.java, "khatm.db"
                         )
                             .build()
                     }
