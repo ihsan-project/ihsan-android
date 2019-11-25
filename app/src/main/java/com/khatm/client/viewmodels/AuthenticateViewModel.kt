@@ -62,11 +62,10 @@ class AuthenticateViewModel : ViewModel() {
 
     fun authenticateAsync(googleAuthData: Intent) : Deferred<User?> {
         val apiResult = CompletableDeferred<User?>()
+        val googleAccount = GoogleSignIn.getSignedInAccountFromIntent(googleAuthData).getResult(
+            ApiException::class.java)
 
         scope.launch {
-            val googleAccount = GoogleSignIn.getSignedInAccountFromIntent(googleAuthData).getResult(
-                ApiException::class.java)
-
             googleAccount?.let {
                 val authentication = repository.getAuthentication(it.id, it.email, it.displayName)
                 userLiveData.postValue(authentication)
