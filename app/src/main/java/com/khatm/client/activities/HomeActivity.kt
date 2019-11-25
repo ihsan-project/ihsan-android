@@ -5,15 +5,17 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.khatm.client.R
+import com.khatm.client.viewmodels.AuthenticateViewModel
 
 class HomeActivity : AppCompatActivity() {
 
-    lateinit var mGoogleSignInClient : GoogleSignInClient
+//    lateinit var mGoogleSignInClient : GoogleSignInClient
     lateinit var signOutButton: Button
     lateinit var textViewName : TextView
     lateinit var textViewEmail : TextView
@@ -33,12 +35,12 @@ class HomeActivity : AppCompatActivity() {
          * Configure sign-in to request the user's ID, email address, and basic profile.
          * ID and basic profile are included in DEFAULT_SIGN_IN.
          */
-        val gso : GoogleSignInOptions = GoogleSignInOptions
-            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .build()
+//        val gso : GoogleSignInOptions = GoogleSignInOptions
+//            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//            .requestEmail()
+//            .build()
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+//        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
         signOutButton.setOnClickListener {
             signOut()
@@ -60,11 +62,12 @@ class HomeActivity : AppCompatActivity() {
 
 
     private fun signOut() {
-        mGoogleSignInClient.signOut().addOnCompleteListener {
+        val authViewModel = ViewModelProviders.of(this).get(AuthenticateViewModel::class.java)
+        authViewModel.setupFor(this)
+        authViewModel.logout()
 
-            Toast.makeText(this, "Successfully signed out", Toast.LENGTH_SHORT).show()
-            finish()
-        }
+        Toast.makeText(this, "Successfully signed out", Toast.LENGTH_SHORT).show()
 
+        finish()
     }
 }

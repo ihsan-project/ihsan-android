@@ -26,7 +26,7 @@ class MainActivity : AsyncActivity() {
         super.onCreate(savedInstanceState)
 
         authViewModel = ViewModelProviders.of(this).get(AuthenticateViewModel::class.java)
-        authViewModel.setupGoogleClientFor(this)
+        authViewModel.setupFor(this)
 
         setContentView(R.layout.activity_main)
         googleSignInButton = findViewById(R.id.button_sign_in_google)
@@ -39,8 +39,10 @@ class MainActivity : AsyncActivity() {
         super.onStart()
 
         authViewModel.repository.authenticatedUser?.observe(this, Observer {
-            if (it.access.isNotBlank()) {
-                goToNextScreen()
+            it?.access?.let {
+                if (it.isNotBlank()) {
+                    goToNextScreen()
+                }
             }
         })
     }

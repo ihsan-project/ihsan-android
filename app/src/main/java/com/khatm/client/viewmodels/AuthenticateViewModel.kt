@@ -34,7 +34,7 @@ class AuthenticateViewModel() : ViewModel() {
             return mGoogleSignInClient.signInIntent
         }
 
-    fun setupGoogleClientFor(loginActivity: AppCompatActivity) {
+    fun setupFor(loginActivity: AppCompatActivity) {
         /*
          * Configure sign-in to request the user's ID, email address, and basic profile.
          * ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -75,6 +75,14 @@ class AuthenticateViewModel() : ViewModel() {
 
     fun save(user: User) {
         repository.insert(user)
+    }
+
+    fun logout() {
+        repository.clear()
+
+        if (mGoogleSignInClient != null) {
+            mGoogleSignInClient.signOut()
+        }
     }
 
     fun cancelAllRequests() = coroutineContext.cancel()

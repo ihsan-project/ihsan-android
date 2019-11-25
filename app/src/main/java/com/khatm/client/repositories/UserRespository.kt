@@ -40,7 +40,7 @@ class UserRepository(private val application : Application, private val api : Kh
         return response;
     }
 
-    val authenticatedUser: LiveData<User>?
+    val authenticatedUser: LiveData<User?>?
         get() {
             return userDao?.authenticatedUser
         }
@@ -48,6 +48,12 @@ class UserRepository(private val application : Application, private val api : Kh
     fun insert(user : User) {
         LocalDatabase.databaseWriteExecutor.execute {
             userDao?.insert(user)
+        }
+    }
+
+    fun clear() {
+        LocalDatabase.databaseWriteExecutor.execute {
+            userDao?.deleteAll()
         }
     }
 

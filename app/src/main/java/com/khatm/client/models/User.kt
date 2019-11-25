@@ -26,7 +26,7 @@ interface KhatmApi {
 interface UserDao {
 
     @get:Query("SELECT * from user WHERE access IS NOT NULL")
-    val authenticatedUser: LiveData<User>
+    val authenticatedUser: LiveData<User?>
 
     @Insert
     fun insert(user: User)
