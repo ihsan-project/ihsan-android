@@ -10,9 +10,16 @@ import okhttp3.RequestBody
 import org.json.JSONObject
 import com.khatm.client.models.UserDao
 import com.khatm.client.models.LocalDatabase
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.launch
+import java.util.concurrent.Future
 
 
-class UserRepository(private val application : Application, private val api : KhatmApi) : Repository() {
+class UserRepository(private val application : Application,
+                     private val api : KhatmApi,
+                     private  val scope : CoroutineScope) : Repository() {
     private val userDao: UserDao?
 
     init {
@@ -51,10 +58,14 @@ class UserRepository(private val application : Application, private val api : Kh
         }
     }
 
-    fun clear() {
-        LocalDatabase.databaseWriteExecutor.execute {
+    fun clear() : Deferred<Boolean> {
+        val completion = CompletableDeferred<Boolean>()
+        scope.launch {
             userDao?.deleteAll()
+            completion.complete(true)
         }
+
+        return completion
     }
 
 }

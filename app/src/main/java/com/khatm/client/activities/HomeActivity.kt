@@ -12,6 +12,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.khatm.client.R
 import com.khatm.client.viewmodels.AuthenticateViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
 
@@ -64,10 +67,11 @@ class HomeActivity : AppCompatActivity() {
     private fun signOut() {
         val authViewModel = ViewModelProviders.of(this).get(AuthenticateViewModel::class.java)
         authViewModel.setupFor(this)
-        authViewModel.logout()
 
-        Toast.makeText(this, "Successfully signed out", Toast.LENGTH_SHORT).show()
-
-        finish()
+        GlobalScope.launch(Dispatchers.Main) {
+            authViewModel.logout().await()
+            Toast.makeText(this@HomeActivity, "Successfully signed out", Toast.LENGTH_SHORT).show()
+            finish()
+        }
     }
 }

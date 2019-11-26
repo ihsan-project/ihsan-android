@@ -48,7 +48,7 @@ class AuthenticateViewModel() : ViewModel() {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(loginActivity, gso)
         activity = loginActivity
-        repository = UserRepository(activity.application, ApiFactory.khatmApi)
+        repository = UserRepository(activity.application, ApiFactory.khatmApi, scope)
     }
 
 
@@ -77,12 +77,12 @@ class AuthenticateViewModel() : ViewModel() {
         repository.insert(user)
     }
 
-    fun logout() {
-        repository.clear()
-
+    fun logout() : Deferred<Boolean> {
         if (mGoogleSignInClient != null) {
             mGoogleSignInClient.signOut()
         }
+
+        return repository.clear()
     }
 
     fun cancelAllRequests() = coroutineContext.cancel()
