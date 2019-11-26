@@ -4,10 +4,9 @@ import android.util.Log
 import retrofit2.Response
 import java.io.IOException
 
+open class RepositoryBase {
 
-open class Repository {
-
-    suspend fun <T : Any> safeApiCall(call: suspend () -> Response<T>, errorMessage: String): T? {
+    suspend fun <T : Any> apiCall(call: suspend () -> Response<T>, errorMessage: String): T? {
 
         val result : Result<T> = safeApiResult(call, errorMessage)
         var data : T? = null
@@ -17,7 +16,7 @@ open class Repository {
                 data = result.data
             is Result.Error -> {
                 // TODO: If 404 then log user out
-                Log.e("Repository", "$errorMessage; ${result.exception}")
+                Log.e("RepositoryBase", "$errorMessage; ${result.exception}")
             }
         }
 

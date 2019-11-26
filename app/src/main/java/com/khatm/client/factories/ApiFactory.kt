@@ -1,11 +1,14 @@
 package com.khatm.client
 
+import android.util.Log
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.khatm.client.models.KhatmApi
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.io.IOException
 
 object ApiFactory {
 
@@ -25,14 +28,12 @@ object ApiFactory {
     }
 
     //OkhttpClient for building http request url
-    private val tmdbClient = OkHttpClient().newBuilder()
+    private val httpClient = OkHttpClient().newBuilder()
         .addInterceptor(authInterceptor)
         .build()
 
-
-
     val retrofit : Retrofit = Retrofit.Builder()
-        .client(tmdbClient)
+        .client(httpClient)
         .baseUrl("https://5cac6678.ngrok.io/")
         .addConverterFactory(MoshiConverterFactory.create())
         .addCallAdapterFactory(CoroutineCallAdapterFactory())

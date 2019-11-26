@@ -1,5 +1,4 @@
 package com.khatm.client.repositories
-
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -9,17 +8,16 @@ import okhttp3.MediaType
 import okhttp3.RequestBody
 import org.json.JSONObject
 import com.khatm.client.models.UserDao
-import com.khatm.client.models.LocalDatabase
+import com.khatm.client.factories.LocalDatabase
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
-import java.util.concurrent.Future
 
 
 class UserRepository(private val application : Application,
                      private val api : KhatmApi,
-                     private  val scope : CoroutineScope) : Repository() {
+                     private  val scope : CoroutineScope) : RepositoryBase() {
     private val userDao: UserDao?
 
     init {
@@ -39,10 +37,9 @@ class UserRepository(private val application : Application,
 
         Log.d("UserRepository", "Get Authentication $email")
 
-        val response = safeApiCall(
+        val response = apiCall(
             call = { api.getAuthenticationAsync(requestBody).await() },
-            errorMessage = "Error Fetching Authentication"
-        )
+            errorMessage = "Error Fetching Authentication")
 
         return response;
     }

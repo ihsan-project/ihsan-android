@@ -1,10 +1,11 @@
-package com.khatm.client.models
+package com.khatm.client.factories
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import java.util.concurrent.Executors
+import com.khatm.client.models.User
+import com.khatm.client.models.UserDao
 
 
 @Database(entities = [User::class], version = 1, exportSchema = false)
