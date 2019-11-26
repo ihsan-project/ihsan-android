@@ -4,27 +4,27 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.khatm.client.models.User
+import com.khatm.client.models.UserModel
 import com.khatm.client.models.UserDao
 
 
-@Database(entities = [User::class], version = 1, exportSchema = false)
-abstract class LocalDatabase : RoomDatabase() {
+@Database(entities = [UserModel::class], version = 1, exportSchema = false)
+abstract class DatabaseFactory : RoomDatabase() {
 
     abstract fun userDao(): UserDao
 
     companion object {
 
         @Volatile
-        private var INSTANCE: LocalDatabase? = null
+        private var INSTANCE: DatabaseFactory? = null
 
-        internal fun getDatabase(context: Context): LocalDatabase? {
+        internal fun getDatabase(context: Context): DatabaseFactory? {
             if (INSTANCE == null) {
-                synchronized(LocalDatabase::class.java) {
+                synchronized(DatabaseFactory::class.java) {
                     if (INSTANCE == null) {
                         INSTANCE = Room.databaseBuilder(
                             context.getApplicationContext(),
-                            LocalDatabase::class.java, "khatm.db"
+                            DatabaseFactory::class.java, "khatm.db"
                         )
                             .build()
                     }

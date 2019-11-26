@@ -9,13 +9,13 @@ import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.khatm.client.R
-import com.khatm.client.extensions.AsyncActivity
+import com.khatm.client.extensions.AsyncActivityExtension
 import com.khatm.client.viewmodels.AuthViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class MainActivity : AsyncActivity() {
+class MainActivity : AsyncActivityExtension() {
 
     private lateinit var authViewModel: AuthViewModel
 

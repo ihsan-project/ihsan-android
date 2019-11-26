@@ -9,8 +9,8 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 
-@Entity
-data class User(
+@Entity(tableName = "user")
+data class UserModel(
     @PrimaryKey val id: Int,
     @ColumnInfo val first_name: String,
     @ColumnInfo val email: String,
@@ -19,17 +19,17 @@ data class User(
 
 interface KhatmApi {
     @POST("authentications")
-    fun getAuthenticationAsync(@Body request: RequestBody) : Deferred<Response<User>>
+    fun getAuthenticationAsync(@Body request: RequestBody) : Deferred<Response<UserModel>>
 }
 
 @Dao
 interface UserDao {
 
     @get:Query("SELECT * from user WHERE access IS NOT NULL")
-    val authenticatedUser: LiveData<User?>
+    val authenticatedUser: LiveData<UserModel?>
 
     @Insert
-    fun insert(user: User)
+    fun insert(user: UserModel)
 
     @Query("DELETE FROM user")
     fun deleteAll()

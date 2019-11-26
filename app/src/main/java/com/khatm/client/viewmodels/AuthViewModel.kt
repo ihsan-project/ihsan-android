@@ -11,8 +11,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.khatm.client.BuildConfig
-import com.khatm.client.models.User
-import com.khatm.client.repositories.UserRepository
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -22,11 +20,11 @@ class AuthViewModel() : ViewModel() {
     private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Default
     private val scope = CoroutineScope(coroutineContext)
 
-    lateinit var repository : UserRepository
+    lateinit var repository : com.khatm.client.repositories.UserRepository
     lateinit var mGoogleSignInClient: GoogleSignInClient
     lateinit var activity: AppCompatActivity
 
-    val userLiveData = MutableLiveData<User>()
+    val userLiveData = MutableLiveData<com.khatm.client.models.UserModel>()
 
     val signInIntent: Intent
         get() {
@@ -47,12 +45,12 @@ class AuthViewModel() : ViewModel() {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(loginActivity, gso)
         activity = loginActivity
-        repository = UserRepository(activity.application, scope)
+        repository = com.khatm.client.repositories.UserRepository(activity.application, scope)
     }
 
 
-    fun authenticateAsync(googleAuthData: Intent) : Deferred<User?> {
-        val apiResult = CompletableDeferred<User?>()
+    fun authenticateAsync(googleAuthData: Intent) : Deferred<com.khatm.client.models.UserModel?> {
+        val apiResult = CompletableDeferred<com.khatm.client.models.UserModel?>()
         val googleAccount = GoogleSignIn.getSignedInAccountFromIntent(googleAuthData).getResult(
             ApiException::class.java)
 
@@ -72,7 +70,7 @@ class AuthViewModel() : ViewModel() {
         return apiResult
     }
 
-    fun save(user: User) : Deferred<Boolean> {
+    fun save(user: com.khatm.client.models.UserModel) : Deferred<Boolean> {
         return repository.insert(user)
     }
 
