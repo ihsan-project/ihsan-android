@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
@@ -39,10 +38,12 @@ class MainActivity : AsyncActivityExtension() {
         super.onStart()
 
         GlobalScope.launch(Dispatchers.Main) {
-            val user = authViewModel.authenticatedUserAsync().await()
+            val user = authViewModel.authorizedUserAsync().await()
 
             user?.access?.let {
                 if (it.isNotBlank()) {
+                    Log.d("MainActivity", "Automatically Login")
+
                     goToNextScreen()
                 }
             }
@@ -55,18 +56,18 @@ class MainActivity : AsyncActivityExtension() {
 
             result?.data?.let {
                 try {
-                    val user = authViewModel.authenticateAsync(it).await()
-
-                    Log.d("MainActivity.kt", "user: $user")
+                    val user = authViewModel.authorizeWithServerAsync(it).await()
 
                     if (user?.access != null) {
-                        authViewModel.save(user).await()
+                        authViewModel.saveAuthorizedUserAsync(user).await()
+
+                        Log.d("MainActivity", "Login successful")
 
                         goToNextScreen()
                     }
                 }
                 catch (e: ApiException) {
-                    Log.d("MainActivity.kt", "Failed: $e")
+                    Log.d("MainActivity", "Failed: $e")
                     Toast.makeText(this@MainActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -75,10 +76,6 @@ class MainActivity : AsyncActivityExtension() {
 
 
     private fun goToNextScreen() {
-        Log.d("MainActivity.kt", "goToNextScreen() called")
-
-        Toast.makeText(this, "Successfully logged in", Toast.LENGTH_SHORT).show()
-
         val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)
     }

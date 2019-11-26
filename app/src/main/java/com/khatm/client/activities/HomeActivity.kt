@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
 
-//    lateinit var mGoogleSignInClient : GoogleSignInClient
     lateinit var signOutButton: Button
     lateinit var textViewName : TextView
     lateinit var textViewEmail : TextView
@@ -56,8 +55,10 @@ class HomeActivity : AppCompatActivity() {
         authViewModel.setupFor(this)
 
         GlobalScope.launch(Dispatchers.Main) {
-            authViewModel.logout().await()
+            authViewModel.logoutAsync().await()
+
             Toast.makeText(this@HomeActivity, "Successfully signed out", Toast.LENGTH_SHORT).show()
+
             finish()
         }
     }

@@ -3,7 +3,6 @@ package com.khatm.client.viewmodels
 import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -25,14 +24,12 @@ class AuthViewModel() : ViewModel() {
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var activity: AppCompatActivity
 
-    val userLiveData = MutableLiveData<UserModel>()
-
     val signInIntent: Intent
         get() {
             return mGoogleSignInClient.signInIntent
         }
 
-    fun setupFor(loginActivity: AppCompatActivity) {
+    fun setupFor(authActivity: AppCompatActivity) {
         /*
          * Configure sign-in to request the user's ID, email address, and basic profile.
          * ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -44,14 +41,14 @@ class AuthViewModel() : ViewModel() {
             .build()
 
         // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(loginActivity, gso)
-        activity = loginActivity
+        mGoogleSignInClient = GoogleSignIn.getClient(authActivity, gso)
+        activity = authActivity
         repository = com.khatm.client.repositories.UserRepository(activity.application, scope)
     }
 
 
-    fun authenticateAsync(googleAuthData: Intent) : Deferred<UserModel?> {
-        val apiResult = CompletableDeferred<UserModel?>()
+    fun authorizeWithServerAsync(googleAuthData: Intent) : Deferred<UserModel?> {
+        val future = CompletableDeferred<UserModel?>()
         val googleAccount = GoogleSignIn.getSignedInAccountFromIntent(googleAuthData).getResult(
             ApiException::class.java)
 
@@ -60,35 +57,29 @@ class AuthViewModel() : ViewModel() {
                 Log.d("AuthViewModel", "Authenticate API ${it.email}")
 
                 val authentication = repository.getAuthentication(it.id, it.email, it.displayName)
-                userLiveData.postValue(authentication)
+                future.complete(authentication)
             }
         }
 
-        userLiveData.observe(activity, Observer {
-            apiResult.complete(it)
-        })
-
-        return apiResult
+        return future
     }
 
-    fun authenticatedUserAsync() : Deferred<UserModel?> {
-        val completion = CompletableDeferred<UserModel?>()
+    fun authorizedUserAsync() : Deferred<UserModel?> {
+        val future = CompletableDeferred<UserModel?>()
 
         repository.authenticatedUser?.observe(activity, Observer {
-            completion.complete(it)
+            future.complete(it)
         })
 
-        return completion
+        return future
     }
 
-    fun save(user: UserModel) : Deferred<Boolean> {
+    fun saveAuthorizedUserAsync(user: UserModel) : Deferred<Boolean> {
         return repository.insert(user)
     }
 
-    fun logout() : Deferred<Boolean> {
-        if (mGoogleSignInClient != null) {
-            mGoogleSignInClient.signOut()
-        }
+    fun logoutAsync() : Deferred<Boolean> {
+        mGoogleSignInClient.signOut()
 
         return repository.clear()
     }

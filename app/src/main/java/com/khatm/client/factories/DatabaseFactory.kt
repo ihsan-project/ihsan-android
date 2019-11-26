@@ -11,8 +11,11 @@ import com.khatm.client.models.UserDao
 @Database(entities = [UserModel::class], version = 1, exportSchema = false)
 abstract class DatabaseFactory : RoomDatabase() {
 
+    /* Configuration for DAOs */
     abstract fun userDao(): UserDao
 
+
+    /* Internal Workings */
     companion object {
 
         @Volatile

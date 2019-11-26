@@ -18,6 +18,7 @@ data class UserModel(
 )
 
 interface KhatmApi {
+
     @POST("authentications")
     fun getAuthenticationAsync(@Body request: RequestBody) : Deferred<Response<UserModel>>
 }

@@ -1,6 +1,5 @@
 package com.khatm.client.repositories
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.khatm.client.ApiFactory
 import com.khatm.client.models.UserModel
@@ -34,8 +33,6 @@ class UserRepository(private val application : Application,
         json.put("platform", 1)
         val requestBody: RequestBody = RequestBody.create(MediaType.parse("application/json"), json.toString())
 
-        Log.d("UserModel", "Get Authentication $email")
-
         val response = ApiFactory.call(
             call = { ApiFactory.api.getAuthenticationAsync(requestBody).await() },
             errorMessage = "Error Fetching Authentication")
@@ -49,24 +46,24 @@ class UserRepository(private val application : Application,
         }
 
     fun insert(user : UserModel) : Deferred<Boolean> {
-        val completion = CompletableDeferred<Boolean>()
+        val future = CompletableDeferred<Boolean>()
         scope.launch {
             userDao?.insert(user)
 
-            completion.complete(true)
+            future.complete(true)
         }
-        return completion
+        return future
     }
 
     fun clear() : Deferred<Boolean> {
-        val completion = CompletableDeferred<Boolean>()
+        val future = CompletableDeferred<Boolean>()
         scope.launch {
             userDao?.deleteAll()
 
-            completion.complete(true)
+            future.complete(true)
         }
 
-        return completion
+        return future
     }
 
 }
