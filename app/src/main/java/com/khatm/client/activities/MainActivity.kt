@@ -8,16 +8,15 @@ import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.khatm.client.R
-import com.khatm.client.extensions.AsyncActivity
-import com.khatm.client.viewmodels.FirstViewModel
+import com.khatm.client.extensions.AsyncActivityExtension
+import com.khatm.client.viewmodels.AuthViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
-class MainActivity : AsyncActivity() {
+class MainActivity : AsyncActivityExtension() {
 
-    private lateinit var firstViewModel: FirstViewModel
+    private lateinit var authViewModel: AuthViewModel
 
     lateinit var googleSignInButton: SignInButton
 
@@ -25,40 +24,50 @@ class MainActivity : AsyncActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        firstViewModel = ViewModelProviders.of(this).get(FirstViewModel::class.java)
-        firstViewModel.setupGoogleClientFor(this)
+        authViewModel = ViewModelProviders.of(this).get(AuthViewModel::class.java)
+        authViewModel.setupFor(this)
 
         setContentView(R.layout.activity_main)
         googleSignInButton = findViewById(R.id.button_sign_in_google)
-        googleSignInButton.setOnClickListener { signInGoogleAction() }
+        googleSignInButton.setOnClickListener {
+            signInGoogleAction()
+        }
     }
 
     override fun onStart() {
         super.onStart()
 
-        if (firstViewModel.isLoggedIn) {
-            Log.d("MainActivity.kt", "Is logged in")
-            goToNextScreen()
+        GlobalScope.launch(Dispatchers.Main) {
+            val user = authViewModel.authorizedUserAsync().await()
+
+            user?.access?.let {
+                if (it.isNotBlank()) {
+                    Log.d("MainActivity", "Automatically Login")
+
+                    goToNextScreen()
+                }
+            }
         }
     }
 
     private fun signInGoogleAction() {
         GlobalScope.launch(Dispatchers.Main) {
-            val result = launchIntentAsync(firstViewModel.signInIntent).await()
+            val result = launchIntentAsync(authViewModel.signInIntent).await()
 
             result?.data?.let {
                 try {
-                    val account = firstViewModel.googleAccount(it)
+                    val user = authViewModel.authorizeWithServerAsync(it).await()
 
-                    val token = firstViewModel.authenticateAsync(this@MainActivity).await()
+                    if (user?.access != null) {
+                        authViewModel.saveAuthorizedUserAsync(user).await()
 
-                    Log.d("MainActivity.kt", "Is logged in " + token)
+                        Log.d("MainActivity", "Login successful")
 
-                    if (account != null) {
                         goToNextScreen()
-                    } else {}
+                    }
                 }
                 catch (e: ApiException) {
+                    Log.d("MainActivity", "Failed: $e")
                     Toast.makeText(this@MainActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -67,10 +76,6 @@ class MainActivity : AsyncActivity() {
 
 
     private fun goToNextScreen() {
-        Log.d("MainActivity.kt", "goToNextScreen() called")
-
-        Toast.makeText(this, "Successfully logged in", Toast.LENGTH_SHORT).show()
-
         val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)
     }
