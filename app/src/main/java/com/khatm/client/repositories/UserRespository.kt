@@ -2,7 +2,7 @@ package com.khatm.client.repositories
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
-import com.khatm.client.models.KhatmApi
+import com.khatm.client.ApiFactory
 import com.khatm.client.models.User
 import okhttp3.MediaType
 import okhttp3.RequestBody
@@ -16,8 +16,7 @@ import kotlinx.coroutines.launch
 
 
 class UserRepository(private val application : Application,
-                     private val api : KhatmApi,
-                     private  val scope : CoroutineScope) : RepositoryBase() {
+                     private  val scope : CoroutineScope) {
     private val userDao: UserDao?
 
     init {
@@ -37,8 +36,8 @@ class UserRepository(private val application : Application,
 
         Log.d("UserRepository", "Get Authentication $email")
 
-        val response = apiCall(
-            call = { api.getAuthenticationAsync(requestBody).await() },
+        val response = ApiFactory.call(
+            call = { ApiFactory.api.getAuthenticationAsync(requestBody).await() },
             errorMessage = "Error Fetching Authentication")
 
         return response;

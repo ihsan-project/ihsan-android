@@ -48,7 +48,7 @@ class AuthenticateViewModel() : ViewModel() {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(loginActivity, gso)
         activity = loginActivity
-        repository = UserRepository(activity.application, ApiFactory.khatmApi, scope)
+        repository = UserRepository(activity.application, scope)
     }
 
 
