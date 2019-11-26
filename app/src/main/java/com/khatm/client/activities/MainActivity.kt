@@ -10,14 +10,14 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.khatm.client.R
 import com.khatm.client.extensions.AsyncActivity
-import com.khatm.client.viewmodels.AuthenticateViewModel
+import com.khatm.client.viewmodels.AuthViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class MainActivity : AsyncActivity() {
 
-    private lateinit var authViewModel: AuthenticateViewModel
+    private lateinit var authViewModel: AuthViewModel
 
     lateinit var googleSignInButton: SignInButton
 
@@ -25,7 +25,7 @@ class MainActivity : AsyncActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        authViewModel = ViewModelProviders.of(this).get(AuthenticateViewModel::class.java)
+        authViewModel = ViewModelProviders.of(this).get(AuthViewModel::class.java)
         authViewModel.setupFor(this)
 
         setContentView(R.layout.activity_main)

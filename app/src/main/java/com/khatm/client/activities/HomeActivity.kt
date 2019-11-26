@@ -8,10 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.khatm.client.R
-import com.khatm.client.viewmodels.AuthenticateViewModel
+import com.khatm.client.viewmodels.AuthViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -65,7 +63,7 @@ class HomeActivity : AppCompatActivity() {
 
 
     private fun signOut() {
-        val authViewModel = ViewModelProviders.of(this).get(AuthenticateViewModel::class.java)
+        val authViewModel = ViewModelProviders.of(this).get(AuthViewModel::class.java)
         authViewModel.setupFor(this)
 
         GlobalScope.launch(Dispatchers.Main) {

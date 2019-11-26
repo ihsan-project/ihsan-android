@@ -10,14 +10,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.khatm.client.ApiFactory
 import com.khatm.client.BuildConfig
 import com.khatm.client.models.User
 import com.khatm.client.repositories.UserRepository
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class AuthenticateViewModel() : ViewModel() {
+class AuthViewModel() : ViewModel() {
 
     private val parentJob = Job()
     private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Default
@@ -59,7 +58,7 @@ class AuthenticateViewModel() : ViewModel() {
 
         scope.launch {
             googleAccount?.let {
-                Log.d("AuthenticateViewModel", "Authenticate API ${it.email}")
+                Log.d("AuthViewModel", "Authenticate API ${it.email}")
 
                 val authentication = repository.getAuthentication(it.id, it.email, it.displayName)
                 userLiveData.postValue(authentication)

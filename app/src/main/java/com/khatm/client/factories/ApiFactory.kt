@@ -32,13 +32,12 @@ object ApiFactory {
         .addInterceptor(authInterceptor)
         .build()
 
-    val retrofit : Retrofit = Retrofit.Builder()
+    private val retrofit : Retrofit = Retrofit.Builder()
         .client(httpClient)
         .baseUrl("https://5cac6678.ngrok.io/")
         .addConverterFactory(MoshiConverterFactory.create())
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()
-
 
     val api : KhatmApi = retrofit.create(KhatmApi::class.java)
 
@@ -52,7 +51,7 @@ object ApiFactory {
                 data = result.data
             is Result.Error -> {
                 // TODO: If 404 then log user out
-                Log.e("RepositoryBase", "$errorMessage; ${result.exception}")
+                Log.e("ApiFactory", "$errorMessage; ${result.exception}")
             }
         }
 
