@@ -32,17 +32,6 @@ class HomeActivity : AppCompatActivity() {
         textViewId = findViewById(R.id.textViewId)
         signOutButton = findViewById(R.id.button_sign_out_google)
 
-        /*
-         * Configure sign-in to request the user's ID, email address, and basic profile.
-         * ID and basic profile are included in DEFAULT_SIGN_IN.
-         */
-//        val gso : GoogleSignInOptions = GoogleSignInOptions
-//            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//            .requestEmail()
-//            .build()
-
-//        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
-
         signOutButton.setOnClickListener {
             signOut()
         }

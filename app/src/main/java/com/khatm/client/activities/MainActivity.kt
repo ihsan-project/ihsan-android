@@ -38,13 +38,15 @@ class MainActivity : AsyncActivityExtension() {
     override fun onStart() {
         super.onStart()
 
-        authViewModel.repository.authenticatedUser?.observe(this, Observer {
-            it?.access?.let {
+        GlobalScope.launch(Dispatchers.Main) {
+            val user = authViewModel.authenticatedUserAsync().await()
+
+            user?.access?.let {
                 if (it.isNotBlank()) {
                     goToNextScreen()
                 }
             }
-        })
+        }
     }
 
     private fun signInGoogleAction() {

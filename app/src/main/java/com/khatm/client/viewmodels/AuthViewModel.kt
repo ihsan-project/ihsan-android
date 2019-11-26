@@ -13,6 +13,7 @@ import com.google.android.gms.common.api.ApiException
 import com.khatm.client.BuildConfig
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
+import com.khatm.client.models.UserModel
 
 class AuthViewModel() : ViewModel() {
 
@@ -20,11 +21,11 @@ class AuthViewModel() : ViewModel() {
     private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Default
     private val scope = CoroutineScope(coroutineContext)
 
-    lateinit var repository : com.khatm.client.repositories.UserRepository
-    lateinit var mGoogleSignInClient: GoogleSignInClient
-    lateinit var activity: AppCompatActivity
+    private lateinit var repository : com.khatm.client.repositories.UserRepository
+    private lateinit var mGoogleSignInClient: GoogleSignInClient
+    private lateinit var activity: AppCompatActivity
 
-    val userLiveData = MutableLiveData<com.khatm.client.models.UserModel>()
+    val userLiveData = MutableLiveData<UserModel>()
 
     val signInIntent: Intent
         get() {
@@ -49,8 +50,8 @@ class AuthViewModel() : ViewModel() {
     }
 
 
-    fun authenticateAsync(googleAuthData: Intent) : Deferred<com.khatm.client.models.UserModel?> {
-        val apiResult = CompletableDeferred<com.khatm.client.models.UserModel?>()
+    fun authenticateAsync(googleAuthData: Intent) : Deferred<UserModel?> {
+        val apiResult = CompletableDeferred<UserModel?>()
         val googleAccount = GoogleSignIn.getSignedInAccountFromIntent(googleAuthData).getResult(
             ApiException::class.java)
 
@@ -70,7 +71,17 @@ class AuthViewModel() : ViewModel() {
         return apiResult
     }
 
-    fun save(user: com.khatm.client.models.UserModel) : Deferred<Boolean> {
+    fun authenticatedUserAsync() : Deferred<UserModel?> {
+        val completion = CompletableDeferred<UserModel?>()
+
+        repository.authenticatedUser?.observe(activity, Observer {
+            completion.complete(it)
+        })
+
+        return completion
+    }
+
+    fun save(user: UserModel) : Deferred<Boolean> {
         return repository.insert(user)
     }
 
