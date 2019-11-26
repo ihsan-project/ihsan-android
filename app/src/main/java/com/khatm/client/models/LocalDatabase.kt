@@ -16,8 +16,6 @@ abstract class LocalDatabase : RoomDatabase() {
 
         @Volatile
         private var INSTANCE: LocalDatabase? = null
-        private val NUMBER_OF_THREADS = 4
-        internal val databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS)
 
         internal fun getDatabase(context: Context): LocalDatabase? {
             if (INSTANCE == null) {

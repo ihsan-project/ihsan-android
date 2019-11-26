@@ -52,16 +52,21 @@ class UserRepository(private val application : Application,
             return userDao?.authenticatedUser
         }
 
-    fun insert(user : User) {
-        LocalDatabase.databaseWriteExecutor.execute {
+    fun insert(user : User) : Deferred<Boolean> {
+        val completion = CompletableDeferred<Boolean>()
+        scope.launch {
             userDao?.insert(user)
+
+            completion.complete(true)
         }
+        return completion
     }
 
     fun clear() : Deferred<Boolean> {
         val completion = CompletableDeferred<Boolean>()
         scope.launch {
             userDao?.deleteAll()
+
             completion.complete(true)
         }
 

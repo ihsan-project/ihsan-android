@@ -73,8 +73,8 @@ class AuthenticateViewModel() : ViewModel() {
         return apiResult
     }
 
-    fun save(user: User) {
-        repository.insert(user)
+    fun save(user: User) : Deferred<Boolean> {
+        return repository.insert(user)
     }
 
     fun logout() : Deferred<Boolean> {
