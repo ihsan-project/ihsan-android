@@ -18,7 +18,7 @@ class LaunchActivity : AppCompatActivity() {
 
         // go straight to main if a token is stored
 //        if (Util.getToken() != null) {
-//            activityIntent = Intent(this, MainActivity::class.java)
+//            activityIntent = Intent(this, AuthActivity::class.java)
 //        } else {
 //            activityIntent = Intent(this, LoginActivity::class.java)
 //        }

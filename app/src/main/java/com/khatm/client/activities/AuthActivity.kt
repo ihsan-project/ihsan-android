@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class MainActivity : AsyncActivityExtension() {
+class AuthActivity : AsyncActivityExtension() {
 
     private lateinit var authViewModel: AuthViewModel
 
@@ -42,7 +42,7 @@ class MainActivity : AsyncActivityExtension() {
 
             user?.access?.let {
                 if (it.isNotBlank()) {
-                    Log.d("MainActivity", "Automatically Login")
+                    Log.d("AuthActivity", "Automatically Login")
 
                     goToNextScreen()
                 }
@@ -61,14 +61,14 @@ class MainActivity : AsyncActivityExtension() {
                     if (user?.access != null) {
                         authViewModel.saveAuthorizedUserAsync(user).await()
 
-                        Log.d("MainActivity", "Login successful")
+                        Log.d("AuthActivity", "Login successful")
 
                         goToNextScreen()
                     }
                 }
                 catch (e: ApiException) {
-                    Log.d("MainActivity", "Failed: $e")
-                    Toast.makeText(this@MainActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
+                    Log.d("AuthActivity", "Failed: $e")
+                    Toast.makeText(this@AuthActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
                 }
             }
         }
