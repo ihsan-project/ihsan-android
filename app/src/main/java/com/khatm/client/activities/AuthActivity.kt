@@ -27,7 +27,7 @@ class AuthActivity : AsyncActivity() {
         authViewModel = ViewModelProviders.of(this).get(AuthViewModel::class.java)
         authViewModel.setupFor(this)
 
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_auth)
         googleSignInButton = findViewById(R.id.button_sign_in_google)
         googleSignInButton.setOnClickListener {
             signInGoogleAction()
