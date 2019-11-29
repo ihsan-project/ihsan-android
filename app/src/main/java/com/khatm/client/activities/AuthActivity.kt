@@ -8,13 +8,13 @@ import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.khatm.client.R
-import com.khatm.client.extensions.AsyncActivityExtension
+import com.khatm.client.extensions.AsyncActivity
 import com.khatm.client.viewmodels.AuthViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class MainActivity : AsyncActivityExtension() {
+class AuthActivity : AsyncActivity() {
 
     private lateinit var authViewModel: AuthViewModel
 
@@ -34,22 +34,6 @@ class MainActivity : AsyncActivityExtension() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        GlobalScope.launch(Dispatchers.Main) {
-            val user = authViewModel.authorizedUserAsync().await()
-
-            user?.access?.let {
-                if (it.isNotBlank()) {
-                    Log.d("MainActivity", "Automatically Login")
-
-                    goToNextScreen()
-                }
-            }
-        }
-    }
-
     private fun signInGoogleAction() {
         GlobalScope.launch(Dispatchers.Main) {
             val result = launchIntentAsync(authViewModel.signInIntent).await()
@@ -61,22 +45,17 @@ class MainActivity : AsyncActivityExtension() {
                     if (user?.access != null) {
                         authViewModel.saveAuthorizedUserAsync(user).await()
 
-                        Log.d("MainActivity", "Login successful")
+                        Log.d("AuthActivity", "Login successful")
 
-                        goToNextScreen()
+                        val intent = Intent(this@AuthActivity, HomeActivity::class.java)
+                        startActivity(intent)
                     }
                 }
                 catch (e: ApiException) {
-                    Log.d("MainActivity", "Failed: $e")
-                    Toast.makeText(this@MainActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
+                    Log.d("AuthActivity", "Failed: $e")
+                    Toast.makeText(this@AuthActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-    }
-
-
-    private fun goToNextScreen() {
-        val intent = Intent(this, HomeActivity::class.java)
-        startActivity(intent)
     }
 }

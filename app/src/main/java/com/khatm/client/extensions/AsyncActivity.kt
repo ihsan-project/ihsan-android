@@ -23,7 +23,7 @@ import kotlinx.coroutines.Deferred
  *   }
  * }
  */
-abstract class AsyncActivityExtension : AppCompatActivity() {
+abstract class AsyncActivity : AppCompatActivity() {
 
     var currentCode : Int = 0
     var resultByCode = mutableMapOf<Int, CompletableDeferred<ActivityResult?>>()

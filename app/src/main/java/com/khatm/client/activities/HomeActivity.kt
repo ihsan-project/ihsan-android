@@ -1,5 +1,6 @@
 package com.khatm.client.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -59,6 +60,8 @@ class HomeActivity : AppCompatActivity() {
 
             Toast.makeText(this@HomeActivity, "Successfully signed out", Toast.LENGTH_SHORT).show()
 
+            val intent = Intent(this@HomeActivity, AuthActivity::class.java)
+            startActivity(intent)
             finish()
         }
     }
