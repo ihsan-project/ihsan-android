@@ -34,22 +34,6 @@ class AuthActivity : AsyncActivityExtension() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        GlobalScope.launch(Dispatchers.Main) {
-            val user = authViewModel.authorizedUserAsync().await()
-
-            user?.access?.let {
-                if (it.isNotBlank()) {
-                    Log.d("AuthActivity", "Automatically Login")
-
-                    goToNextScreen()
-                }
-            }
-        }
-    }
-
     private fun signInGoogleAction() {
         GlobalScope.launch(Dispatchers.Main) {
             val result = launchIntentAsync(authViewModel.signInIntent).await()
@@ -63,7 +47,8 @@ class AuthActivity : AsyncActivityExtension() {
 
                         Log.d("AuthActivity", "Login successful")
 
-                        goToNextScreen()
+                        val intent = Intent(this@AuthActivity, HomeActivity::class.java)
+                        startActivity(intent)
                     }
                 }
                 catch (e: ApiException) {
@@ -72,11 +57,5 @@ class AuthActivity : AsyncActivityExtension() {
                 }
             }
         }
-    }
-
-
-    private fun goToNextScreen() {
-        val intent = Intent(this, HomeActivity::class.java)
-        startActivity(intent)
     }
 }
