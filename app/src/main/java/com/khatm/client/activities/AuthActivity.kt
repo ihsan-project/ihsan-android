@@ -3,7 +3,14 @@ package com.khatm.client.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
@@ -32,6 +39,21 @@ class AuthActivity : AsyncActivity() {
         googleSignInButton.setOnClickListener {
             signInGoogleAction()
         }
+
+        val layout: ConstraintLayout = findViewById(R.id.activity_auth);
+        layout.addView(createProgressView())
+    }
+
+    private fun createProgressView() : FrameLayout {
+        val inflater = LayoutInflater.from(this)
+        val layout = inflater.inflate(R.layout.view_progress, null, false) as FrameLayout
+        layout.setVisibility(View.VISIBLE);
+
+        var params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+
+        layout.layoutParams = params
+
+        return layout
     }
 
     private fun signInGoogleAction() {
