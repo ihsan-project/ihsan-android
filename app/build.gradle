@@ -42,6 +42,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
+    implementation "com.google.android.material:material:1.1.0-beta02"
+
     // From https://android.jlelse.eu/android-networking-in-2019-retrofit-with-kotlins-coroutines-aefe82c4d777
     def moshiVersion="1.8.0"
     def retrofit2_version = "2.5.0"
