@@ -40,27 +40,35 @@ class AuthActivity : BaseActivity() {
 
     private fun signInGoogleAction() {
         displayLoading()
-//        GlobalScope.launch(Dispatchers.Main) {
-//            val result = launchIntentAsync(authViewModel.signInIntent).await()
-//
-//            result?.data?.let {
-//                try {
-//                    val user = authViewModel.authorizeWithServerAsync(it).await()
-//
-//                    if (user?.access != null) {
-//                        authViewModel.saveAuthorizedUserAsync(user).await()
-//
-//                        Log.d("AuthActivity", "Login successful")
-//
-//                        val intent = Intent(this@AuthActivity, HomeActivity::class.java)
-//                        startActivity(intent)
-//                    }
-//                }
-//                catch (e: ApiException) {
-//                    Log.d("AuthActivity", "Failed: $e")
-//                    Toast.makeText(this@AuthActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//        }
+
+        GlobalScope.launch(Dispatchers.Main) {
+            val result = launchIntentAsync(authViewModel.signInIntent).await()
+
+            result?.data?.let {
+                try {
+                    val user = authViewModel.authorizeWithServerAsync(it).await()
+
+                    if (user?.access != null) {
+                        authViewModel.saveAuthorizedUserAsync(user).await()
+
+                        Log.d("AuthActivity", "Login successful")
+
+                        val intent = Intent(this@AuthActivity, HomeActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        Log.d("AuthActivity", "Failed: server responded without access token")
+                        Toast.makeText(this@AuthActivity, "Failed to authenticate. Please try again.", Toast.LENGTH_SHORT).show()
+                    }
+
+                    dismissLoading()
+                }
+                catch (e: ApiException) {
+                    Log.d("AuthActivity", "Failed: $e")
+                    Toast.makeText(this@AuthActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
+                    dismissLoading()
+                }
+            }
+        }
     }
 }

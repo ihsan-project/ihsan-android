@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:wheel="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/progress_overlay"
+    android:id="@+id/loading_overlay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:alpha="0.4"

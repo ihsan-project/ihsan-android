@@ -1,9 +1,11 @@
 package com.khatm.client.extensions
 
 
+import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -19,14 +21,23 @@ abstract class BaseActivity : AppCompatActivity() {
     */
 
     fun displayLoading() {
-        val layout: ConstraintLayout = findViewById(R.id.activity_auth);
-        layout.addView(loadingIndicatorView)
+        mainLayout.addView(loadingIndicatorView)
     }
+
+    fun dismissLoading() {
+        val loadingView : FrameLayout = findViewById(R.id.loading_overlay)
+        mainLayout.removeView(loadingView)
+    }
+
+    val mainLayout: ViewGroup
+        get() {
+            return findViewById<ViewGroup>(android.R.id.content)
+        }
 
     private val loadingIndicatorView : FrameLayout
         get() {
             val inflater = LayoutInflater.from(this)
-            val layout = inflater.inflate(R.layout.view_progress, null, false) as FrameLayout
+            val layout = inflater.inflate(R.layout.view_loading, null, false) as FrameLayout
             layout.setVisibility(View.VISIBLE);
 
             var params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
