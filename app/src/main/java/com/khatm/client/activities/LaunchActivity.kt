@@ -27,7 +27,7 @@ class LaunchActivity : AppCompatActivity() {
         GlobalScope.launch(Dispatchers.Main) {
             val user = authViewModel.authorizedUserAsync().await()
             var intent = Intent(this@LaunchActivity, AuthActivity::class.java)
-
+            
             user?.access?.let {
                 if (it.isNotBlank()) {
                     Log.d("LaunchActivity", "Already Logged in")
