@@ -13,40 +13,34 @@ import com.khatm.client.R
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 
+/*
+* Loading Indicator Controls
+*/
+
+fun AppCompatActivity.displayLoading() {
+    val inflater = LayoutInflater.from(this)
+    val loadingLayout = inflater.inflate(R.layout.view_loading, null, false) as FrameLayout
+    loadingLayout.setVisibility(View.VISIBLE);
+
+    var params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+
+    loadingLayout.layoutParams = params
+
+    mainLayout.addView(loadingLayout)
+}
+
+fun AppCompatActivity.dismissLoading() {
+    val loadingView : FrameLayout = findViewById(R.id.loading_overlay)
+    mainLayout.removeView(loadingView)
+}
+
+val AppCompatActivity.mainLayout: ViewGroup
+    get() {
+        return findViewById<ViewGroup>(android.R.id.content)
+    }
+
 
 abstract class BaseActivity : AppCompatActivity() {
-
-    /*
-    * Loading Indicator Controls
-    */
-
-    fun displayLoading() {
-        mainLayout.addView(loadingIndicatorView)
-    }
-
-    fun dismissLoading() {
-        val loadingView : FrameLayout = findViewById(R.id.loading_overlay)
-        mainLayout.removeView(loadingView)
-    }
-
-    val mainLayout: ViewGroup
-        get() {
-            return findViewById<ViewGroup>(android.R.id.content)
-        }
-
-    private val loadingIndicatorView : FrameLayout
-        get() {
-            val inflater = LayoutInflater.from(this)
-            val layout = inflater.inflate(R.layout.view_loading, null, false) as FrameLayout
-            layout.setVisibility(View.VISIBLE);
-
-            var params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
-
-            layout.layoutParams = params
-
-            return layout
-        }
-
     /*
     * The following is code to observe responses to asynchronous Intent actions
     *
@@ -54,8 +48,8 @@ abstract class BaseActivity : AppCompatActivity() {
     * Used to create an async flow, a well as managing multiple intents
     */
 
-    var currentCode : Int = 0
-    var resultByCode = mutableMapOf<Int, CompletableDeferred<ActivityResult?>>()
+    private var currentCode : Int = 0
+    private var resultByCode = mutableMapOf<Int, CompletableDeferred<ActivityResult?>>()
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         resultByCode[requestCode]?.let {
