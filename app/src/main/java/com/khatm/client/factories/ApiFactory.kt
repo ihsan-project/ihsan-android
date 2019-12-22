@@ -34,7 +34,7 @@ object ApiFactory {
 
     private val retrofit : Retrofit = Retrofit.Builder()
         .client(httpClient)
-        .baseUrl("https://d8837f80.ngrok.io/")
+        .baseUrl("https://a16fbbd3.ngrok.io/")
         .addConverterFactory(MoshiConverterFactory.create())
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()
