@@ -25,14 +25,36 @@ platform :android do
   lane :beta do
     gradle(task: "clean assembleRelease")
     crashlytics
-  
+
     # sh "your_script.sh"
     # You can also use other beta testing services here
   end
 
   desc "Deploy a new version to the Google Play"
   lane :deploy do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store
+
+    # TODO: test, need to remove
+    ENV['KEYSTORE_FILE'] = '/Users/mmislam101/git/khatm-keystore'
+    ENV['GOOGLE_SERVICE_FILE'] = '/Users/mmislam101/git/khatm-fastlane.json'
+    ENV['KEYSTORE_PASSWORD'] = ''
+    ENV['KEY_PASSWORD'] = ''
+    ENV['KEY_ALIAS'] = 'khatm-keystore-alias'
+
+    gradle(
+      task: "clean assemble",
+      build_type: "Release",
+      print_command: false,
+      properties: {
+        "android.injected.signing.store.file" => ENV['KEYSTORE_FILE'],
+        "android.injected.signing.store.password" => ENV['KEYSTORE_PASSWORD'],
+        "android.injected.signing.key.alias" => ENV['KEY_ALIAS'],
+        "android.injected.signing.key.password" => ENV['KEY_PASSWORD'],
+      }
+    )
+    upload_to_play_store(
+      track: 'alpha',
+      release_status: 'draft',
+      json_key: ENV['GOOGLE_SERVICE_FILE']
+    )
   end
 end
