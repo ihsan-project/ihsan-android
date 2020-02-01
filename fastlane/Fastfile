@@ -1,0 +1,60 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  desc "Submit a new Beta Build to Crashlytics Beta"
+  lane :beta do
+    gradle(task: "clean assembleRelease")
+    crashlytics
+
+    # sh "your_script.sh"
+    # You can also use other beta testing services here
+  end
+
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do
+
+    # TODO: test, need to remove
+    ENV['KEYSTORE_FILE'] = '/Users/mmislam101/git/khatm-keystore'
+    ENV['GOOGLE_SERVICE_FILE'] = '/Users/mmislam101/git/khatm-fastlane.json'
+    ENV['KEYSTORE_PASSWORD'] = ''
+    ENV['KEY_PASSWORD'] = ''
+    ENV['KEY_ALIAS'] = 'khatm-keystore-alias'
+
+    gradle(
+      task: "clean assemble",
+      build_type: "Release",
+      print_command: false,
+      properties: {
+        "android.injected.signing.store.file" => ENV['KEYSTORE_FILE'],
+        "android.injected.signing.store.password" => ENV['KEYSTORE_PASSWORD'],
+        "android.injected.signing.key.alias" => ENV['KEY_ALIAS'],
+        "android.injected.signing.key.password" => ENV['KEY_PASSWORD'],
+      }
+    )
+    upload_to_play_store(
+      track: 'alpha',
+      release_status: 'draft',
+      json_key: ENV['GOOGLE_SERVICE_FILE']
+    )
+  end
+end
