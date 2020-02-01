@@ -33,13 +33,6 @@ platform :android do
   desc "Deploy a new version to the Google Play"
   lane :deploy do
 
-    # TODO: test, need to remove
-    ENV['KEYSTORE_FILE'] = '/Users/mmislam101/git/khatm-keystore'
-    ENV['GOOGLE_SERVICE_FILE'] = '/Users/mmislam101/git/khatm-fastlane.json'
-    ENV['KEYSTORE_PASSWORD'] = ''
-    ENV['KEY_PASSWORD'] = ''
-    ENV['KEY_ALIAS'] = 'khatm-keystore-alias'
-
     gradle(
       task: "clean assemble",
       build_type: "Release",

@@ -1,0 +1,8 @@
+
+
+# Khatm Android Fastlane
+export KEYSTORE_FILE="[PATH TO khatm-keystore]"
+export GOOGLE_SERVICE_FILE="[PATH TO khatm-fastlane.json]"
+export KEYSTORE_PASSWORD="[Get from cert file]"
+export KEY_PASSWORD="[Get from cert file]"
+export KEY_ALIAS="khatm-keystore-alias"
