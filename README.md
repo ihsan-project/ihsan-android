@@ -1,7 +1,8 @@
 # Khatm Android
 
 ## Environment
-- Ruby 2.6.1 (as defined in `.ruby-version`)
+- Ruby 2.5.1p57
+- Bundler version 2.0.2
 
 ### Setup
 
