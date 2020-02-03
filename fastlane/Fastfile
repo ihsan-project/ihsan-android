@@ -16,6 +16,8 @@
 default_platform(:android)
 
 platform :android do
+  require 'aws-sdk-s3'
+
   desc "Runs all the tests"
   lane :test do
     gradle(task: "test")
@@ -33,21 +35,56 @@ platform :android do
   desc "Deploy a new version to the Google Play"
   lane :deploy do
 
+    android_certs
+
     gradle(
       task: "clean assemble",
       build_type: "Release",
       print_command: false,
       properties: {
-        "android.injected.signing.store.file" => ENV['KEYSTORE_FILE'],
+        "android.injected.signing.store.file" => "#{Dir.pwd}/keystore",
         "android.injected.signing.store.password" => ENV['KEYSTORE_PASSWORD'],
         "android.injected.signing.key.alias" => ENV['KEY_ALIAS'],
         "android.injected.signing.key.password" => ENV['KEY_PASSWORD'],
       }
     )
+
+    upload_play_store
+    cleanup
+  end
+
+  desc "Upload release APK to Google Playstore"
+  lane :upload_play_store do
     upload_to_play_store(
       track: 'alpha',
       release_status: 'draft',
-      json_key: ENV['GOOGLE_SERVICE_FILE']
+      json_key: "#{Dir.pwd}/google-services.json"
     )
+  end
+
+  desc "Download Android Build Certificates"
+  lane :android_certs do
+    s3 = Aws::S3::Resource.new(region: 'us-east-1')
+
+    # Download kyestore file
+    keystore_obj = s3.bucket('certs.khatm.org').object('khatm-keystore')
+    keystore_obj.get(response_target: 'keystore')
+
+    # Download google service JSON file
+    google_service_obj = s3.bucket('certs.khatm.org').object('khatm-fastlane.json')
+    google_service_obj.get(response_target: 'google-services.json')
+
+    # Update local.properties with keys
+    keys = File.open('../local.properties').grep(/google_sso_web_application_client_id/)
+    if keys.empty?
+      open('../local.properties', 'a') do |f|
+        f.puts "google_sso_web_application_client_id=\"#{ENV['GOOGLE_SSO_WEB_APPLICATION_CLIENT_ID']}\""
+      end
+    end
+  end
+
+  desc "Cleanup"
+  lane :cleanup do
+    `rm google-services.json keystore`
   end
 end
