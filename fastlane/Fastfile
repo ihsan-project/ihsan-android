@@ -75,10 +75,16 @@ platform :android do
     google_service_obj.get(response_target: 'google-services.json')
 
     # Update local.properties with keys
-    keys = File.open('../local.properties').grep(/google_sso_web_application_client_id/)
-    if keys.empty?
-      open('../local.properties', 'a') do |f|
+    properties_file = '../local.properties'
+    if File.open(properties_file, 'a+').grep(/google_sso_web_application_client_id/).empty?
+      File.open(properties_file, 'a') do |f|
         f.puts "google_sso_web_application_client_id=\"#{ENV['GOOGLE_SSO_WEB_APPLICATION_CLIENT_ID']}\""
+      end
+    end
+
+    if File.open(properties_file, 'a+').grep(/sdk.dir/).empty?
+      File.open(properties_file, 'a') do |f|
+        f.puts "sdk.dir=#{ENV['ANDROID_HOME']}"
       end
     end
   end
