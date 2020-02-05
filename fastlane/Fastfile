@@ -23,19 +23,11 @@ platform :android do
     gradle(task: "test")
   end
 
-  desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :beta do
-    gradle(task: "clean assembleRelease")
-    crashlytics
-
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
-  end
-
-  desc "Deploy a new version to the Google Play"
+  desc "Deploy Google Play"
   lane :deploy do
 
     android_certs
+    setup_env
 
     gradle(
       task: "clean assemble",
@@ -49,32 +41,29 @@ platform :android do
       }
     )
 
-    upload_play_store
-    cleanup
-  end
-
-  desc "Upload release APK to Google Playstore"
-  lane :upload_play_store do
     upload_to_play_store(
       track: 'alpha',
       release_status: 'draft',
       json_key: "#{Dir.pwd}/google-services.json"
     )
+
+    cleanup
   end
 
   desc "Download Android Build Certificates"
   lane :android_certs do
-    s3 = Aws::S3::Resource.new(region: 'us-east-1')
+    s3 = Aws::S3::Resource.new(region: ENV['AWS_BUCKET_REGION'])
+    bucket = ENV['AWS_CERT_BUCKET']
 
-    # Download kyestore file
-    keystore_obj = s3.bucket('certs.khatm.org').object('khatm-keystore')
+    keystore_obj = s3.bucket(bucket).object('khatm-keystore')
     keystore_obj.get(response_target: 'keystore')
 
-    # Download google service JSON file
-    google_service_obj = s3.bucket('certs.khatm.org').object('khatm-fastlane.json')
+    google_service_obj = s3.bucket(bucket).object('khatm-fastlane.json')
     google_service_obj.get(response_target: 'google-services.json')
+  end
 
-    # Update local.properties with keys
+  desc "Setup Android Environment"
+  lane :setup_env do
     properties_file = '../local.properties'
     if File.open(properties_file, 'a+').grep(/google_sso_web_application_client_id/).empty?
       File.open(properties_file, 'a') do |f|
