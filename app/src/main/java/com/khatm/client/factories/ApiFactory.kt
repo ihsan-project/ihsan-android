@@ -34,7 +34,7 @@ object ApiFactory {
 
     private val retrofit : Retrofit = Retrofit.Builder()
         .client(httpClient)
-        .baseUrl("https://a16fbbd3.ngrok.io/")
+        .baseUrl("https://staging-api.khatmapp.com/")
         .addConverterFactory(MoshiConverterFactory.create())
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()
