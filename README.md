@@ -4,22 +4,18 @@
 - Ruby 2.5.1p57
 - Bundler version 2.0.2
 
-### Setup
+### Local Development with Android Studio
 
-1. Follow instructions in `local.properties.copy` to setup local environments
-1. Run Gradle->Tasks->Android->signingReport to get local SHA-1
-1. Add the SHA-1 to Firebase. Go to Settings->General, scroll down and `Add fingerprint`
+1. Run `Gradle->Tasks->Android->signingReport` to get local SHA-1
+1. Login to the staging Firebase app.
+1. Go to Settings->General, scroll down and `Add fingerprint`, add the SHA-1
+1. Download the `google-services.json` file from Firebase staging app
+1. Save the `google.services.json` file in `app/google-services.json`
 
-## Building with fastlane
+### Production APK with fastlane
 
-### Setup
-
-1. Download `khatm-keystore` and `khatm-fastlane.json` from admin ENV bucket
 1. Update the keys in `fastlane/env` from admin cert document. DO NOT MERGE THESE CHANGES IN
 1. Run `cat fastlane/env >> ~/.bash_profile`. Undo changes to `fastlnae/env`
 1. Run `source ~/.bash_profile`, or open new terminal session.
 1. Install fastlane and other gems with with `bundle install`
-
-### Run
-
 1. Run `bundle exec fastlane deploy`

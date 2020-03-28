@@ -9,7 +9,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.khatm.client.BuildConfig
+import com.khatm.client.R
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 import com.khatm.client.models.UserModel
@@ -36,7 +36,7 @@ class AuthViewModel() : ViewModel() {
          */
         val gso: GoogleSignInOptions = GoogleSignInOptions
             .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(BuildConfig.googleWebApplicationClientId)
+            .requestIdToken(authActivity.getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
 
