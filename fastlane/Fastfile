@@ -53,24 +53,22 @@ platform :android do
   desc "Download Android Build Certificates"
   lane :android_certs do
     s3 = Aws::S3::Resource.new(region: ENV['AWS_BUCKET_REGION'])
-    bucket = ENV['AWS_CERT_BUCKET']
+    bucket = s3.bucket(ENV['AWS_CERT_BUCKET'])
 
-    keystore_obj = s3.bucket(bucket).object('keystore')
-    keystore_obj.get(response_target: 'keystore')
+    # Files necessary for production build and upload to google playstore
+    bucket.object('keystore').get(response_target: 'keystore')
+    bucket.object('playstore_key.json').get(response_target: 'playstore_key.json')
 
-    google_service_obj = s3.bucket(bucket).object('playstore_key.json')
-    google_service_obj.get(response_target: 'playstore_key.json')
+    # Files necessary for Google Sign-in/Authentication
+    bucket.object('google-services.json').get(response_target: '../app/google-services.json')
   end
 
   desc "Setup Android Environment"
   lane :setup_env do
     properties_file = '../local.properties'
-    if File.open(properties_file, 'a+').grep(/google_sso_web_application_client_id/).empty?
-      File.open(properties_file, 'a') do |f|
-        f.puts "google_sso_web_application_client_id=\"#{ENV['GOOGLE_SSO_WEB_APPLICATION_CLIENT_ID']}\""
-      end
-    end
 
+    # Normally Android Studio would automatically crate this file
+    # ANDROID_HOME is part of the build environment, ex. /Users/build-user/Library/Android/sdk
     if File.open(properties_file, 'a+').grep(/sdk.dir/).empty?
       File.open(properties_file, 'a') do |f|
         f.puts "sdk.dir=#{ENV['ANDROID_HOME']}"

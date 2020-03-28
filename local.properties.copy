@@ -1,4 +1,0 @@
-# Add these to local.properties
-# The values can be found from the environments from the khatm admin folders
-
-google_sso_web_application_client_id=""
