@@ -25,7 +25,7 @@ android {
         Properties properties = new Properties()
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
 
-        it.buildConfigField 'String', "googleWebApplicationClientId", properties.getProperty("google_sso_web_application_client_id", "")
+//        it.buildConfigField 'String', "googleWebApplicationClientId", properties.getProperty("google_sso_web_application_client_id", "")
     }
 }
 
@@ -78,4 +78,6 @@ dependencies {
     kapt "androidx.room:room-compiler:$rootProject.roomVersion"
     androidTestImplementation "androidx.room:room-testing:$rootProject.roomVersion"
     kapt "android.arch.persistence.room:compiler:1.1.1"
+
+    apply plugin: 'com.google.gms.google-services'
 }

@@ -44,7 +44,7 @@ platform :android do
     upload_to_play_store(
       track: 'alpha',
       release_status: 'draft',
-      json_key: "#{Dir.pwd}/google-services.json"
+      json_key: "#{Dir.pwd}/playstore_key.json"
     )
 
     cleanup
@@ -55,11 +55,11 @@ platform :android do
     s3 = Aws::S3::Resource.new(region: ENV['AWS_BUCKET_REGION'])
     bucket = ENV['AWS_CERT_BUCKET']
 
-    keystore_obj = s3.bucket(bucket).object('khatm-keystore')
+    keystore_obj = s3.bucket(bucket).object('keystore')
     keystore_obj.get(response_target: 'keystore')
 
-    google_service_obj = s3.bucket(bucket).object('khatm-fastlane.json')
-    google_service_obj.get(response_target: 'google-services.json')
+    google_service_obj = s3.bucket(bucket).object('playstore_key.json')
+    google_service_obj.get(response_target: 'playstore_key.json')
   end
 
   desc "Setup Android Environment"
@@ -80,6 +80,6 @@ platform :android do
 
   desc "Cleanup"
   lane :cleanup do
-    `rm google-services.json keystore`
+    `rm playstore_key.json keystore`
   end
 end
