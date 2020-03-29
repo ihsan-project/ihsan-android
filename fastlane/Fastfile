@@ -78,6 +78,6 @@ platform :android do
 
   desc "Cleanup"
   lane :cleanup do
-    `rm playstore_key.json keystore`
+    `rm playstore_key.json keystore ../app/google-services.json`
   end
 end
