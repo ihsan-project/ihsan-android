@@ -9,10 +9,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.khatm.client.BuildConfig
 import com.khatm.client.R
+import com.khatm.client.models.UserModel
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
-import com.khatm.client.models.UserModel
+
 
 class AuthViewModel() : ViewModel() {
 
@@ -27,6 +29,14 @@ class AuthViewModel() : ViewModel() {
     val signInIntent: Intent
         get() {
             return mGoogleSignInClient.signInIntent
+        }
+
+    val versionString: String
+        get() {
+            val versionCode = BuildConfig.VERSION_CODE
+            val versionName = BuildConfig.VERSION_NAME
+
+            return "v.${versionName} code ${versionCode}"
         }
 
     fun setupFor(authActivity: AppCompatActivity) {

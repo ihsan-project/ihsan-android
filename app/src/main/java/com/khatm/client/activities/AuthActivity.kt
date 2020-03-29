@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.api.ApiException
@@ -20,9 +21,6 @@ class AuthActivity : BaseActivity() {
 
     private lateinit var authViewModel: AuthViewModel
 
-    lateinit var googleSignInButton: Button
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -30,10 +28,14 @@ class AuthActivity : BaseActivity() {
         authViewModel.setupFor(this)
 
         setContentView(R.layout.activity_auth)
-        googleSignInButton = findViewById(R.id.button_sign_in_google)
+
+        val googleSignInButton: Button = findViewById(R.id.button_sign_in_google)
         googleSignInButton.setOnClickListener {
             signInGoogleAction()
         }
+
+        val versionTextView : TextView = findViewById(R.id.textView_version)
+        versionTextView.text = authViewModel.versionString
     }
 
     private fun signInGoogleAction() {
