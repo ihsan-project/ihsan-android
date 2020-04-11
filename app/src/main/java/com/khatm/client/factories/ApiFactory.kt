@@ -1,6 +1,7 @@
 package com.khatm.client
 
 import android.util.Log
+import com.khatm.client.BuildConfig
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.khatm.client.models.KhatmApi
 import okhttp3.Interceptor
@@ -34,7 +35,7 @@ object ApiFactory {
 
     private val retrofit : Retrofit = Retrofit.Builder()
         .client(httpClient)
-        .baseUrl("https://staging-api.khatmapp.com/")
+        .baseUrl(BuildConfig.apiUrl)
         .addConverterFactory(MoshiConverterFactory.create())
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()
