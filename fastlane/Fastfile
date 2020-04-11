@@ -26,7 +26,7 @@ platform :android do
   desc "Build Production APK"
   lane :build_production do
 
-    android_certs
+    download_production_certs
     setup_env
 
     gradle(
@@ -49,7 +49,7 @@ platform :android do
 
     build_production
 
-    android_certs
+    download_production_certs
 
     upload_to_play_store(
       track: 'alpha',
@@ -61,7 +61,7 @@ platform :android do
   end
 
   desc "Download Android Build Certificates"
-  lane :android_certs do
+  lane :download_production_certs do
     s3 = Aws::S3::Resource.new(region: ENV['AWS_BUCKET_REGION'])
     bucket = s3.bucket(ENV['AWS_CERT_BUCKET'])
 
@@ -75,15 +75,24 @@ platform :android do
 
   desc "Setup Android Environment"
   lane :setup_env do
-    properties_file = '../local.properties'
-
     # Normally Android Studio would automatically crate this file
     # ANDROID_HOME is part of the build environment, ex. /Users/build-user/Library/Android/sdk
+
+    properties_file = '../local.properties'
     if File.open(properties_file, 'a+').grep(/sdk.dir/).empty?
       File.open(properties_file, 'a') do |f|
         f.puts "sdk.dir=#{ENV['ANDROID_HOME']}"
       end
     end
+  end
+
+  desc "Setup Development Environment"
+  lane :setup_development do
+    s3 = Aws::S3::Resource.new(region: ENV['AWS_BUCKET_REGION'])
+    bucket = s3.bucket(ENV['AWS_CERT_BUCKET'])
+
+    # Files necessary for Google Sign-in/Authentication
+    bucket.object('google-services.json').get(response_target: '../app/google-services.json')
   end
 
   desc "Cleanup"
