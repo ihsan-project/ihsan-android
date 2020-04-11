@@ -19,6 +19,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    buildTypes.each {
+        // Load local.properties ENVs
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+
+        it.buildConfigField 'String', "apiUrl", properties.getProperty("api_url", "\"https://staging-api.khatmapp.com/\"")
+
+    }
 }
 
 dependencies {
