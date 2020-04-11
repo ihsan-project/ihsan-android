@@ -23,8 +23,8 @@ platform :android do
     gradle(task: "test")
   end
 
-  desc "Deploy Google Play"
-  lane :deploy do
+  desc "Build Production APK"
+  lane :build_production do
 
     android_certs
     setup_env
@@ -40,6 +40,16 @@ platform :android do
         "android.injected.signing.key.password" => ENV['KEY_PASSWORD'],
       }
     )
+
+    cleanup
+  end
+
+  desc "Build and deploy Google Play"
+  lane :deploy do
+
+    build_production
+
+    android_certs
 
     upload_to_play_store(
       track: 'alpha',
