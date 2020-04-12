@@ -83,6 +83,7 @@ platform :android do
       File.open(properties_file, 'a') do |f|
         f.puts "sdk.dir=#{ENV['ANDROID_HOME']}"
         f.puts "api_url=\"#{ENV['API_URL']}\""
+        f.puts "api_key=\"#{ENV['API_KEY']}\""
       end
     end
   end

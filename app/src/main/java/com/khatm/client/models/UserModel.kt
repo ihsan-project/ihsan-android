@@ -19,15 +19,15 @@ data class UserModel(
 
 interface KhatmApi {
 
-    @POST("authentications")
-    fun getAuthenticationAsync(@Body request: RequestBody) : Deferred<Response<UserModel>>
+    @POST("authorizations")
+    fun getAuthorizationAsync(@Body request: RequestBody) : Deferred<Response<UserModel>>
 }
 
 @Dao
 interface UserDao {
 
     @get:Query("SELECT * from user WHERE access IS NOT NULL")
-    val authenticatedUser: LiveData<UserModel?>
+    val authorizedUser: LiveData<UserModel?>
 
     @Insert
     fun insert(user: UserModel)

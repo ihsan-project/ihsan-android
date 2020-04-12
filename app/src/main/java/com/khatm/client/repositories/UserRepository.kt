@@ -23,7 +23,7 @@ class UserRepository(private val application : Application,
         userDao = db?.userDao()
     }
 
-    suspend fun getAuthentication(uuid: String?, email: String?, firstName: String?) : UserModel? {
+    suspend fun getAuthorizationFromServer(uuid: String?, email: String?, firstName: String?) : UserModel? {
 
         // TODO: Create a serializer in UserModel model class to help with this
         val json = JSONObject()
@@ -34,18 +34,18 @@ class UserRepository(private val application : Application,
         val requestBody: RequestBody = RequestBody.create(MediaType.parse("application/json"), json.toString())
 
         val response = ApiFactory.call(
-            call = { ApiFactory.api.getAuthenticationAsync(requestBody).await() },
-            errorMessage = "Error Fetching Authentication")
+            call = { ApiFactory.api.getAuthorizationAsync(requestBody).await() },
+            errorMessage = "Error Fetching Authorization")
 
         return response;
     }
 
-    val authenticatedUser: LiveData<UserModel?>?
+    val authorizedUser: LiveData<UserModel?>?
         get() {
-            return userDao?.authenticatedUser
+            return userDao?.authorizedUser
         }
 
-    fun insert(user : UserModel) : Deferred<Boolean> {
+    fun store(user : UserModel) : Deferred<Boolean> {
         val future = CompletableDeferred<Boolean>()
         scope.launch {
             userDao?.insert(user)

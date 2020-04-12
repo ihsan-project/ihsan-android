@@ -58,7 +58,7 @@ class AuthActivity : BaseActivity() {
                         finish()
                     } else {
                         Log.d("AuthActivity", "Failed: server responded without access token")
-                        Toast.makeText(this@AuthActivity, "Failed to authenticate. Please try again.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@AuthActivity, "Failed to authorize. Please try again.", Toast.LENGTH_SHORT).show()
                     }
 
                     dismissLoading()
