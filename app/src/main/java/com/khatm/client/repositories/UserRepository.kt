@@ -23,13 +23,14 @@ class UserRepository(private val application : Application,
         userDao = db?.userDao()
     }
 
-    suspend fun getAuthorizationFromServer(uuid: String?, email: String?, firstName: String?) : UserModel? {
+    suspend fun getAuthorizationFromServer(uuid: String?, email: String?, firstName: String?, idToken: String?) : UserModel? {
 
         // TODO: Create a serializer in UserModel model class to help with this
         val json = JSONObject()
         json.put("email", email)
         json.put("uuid", uuid)
         json.put("first_name", firstName)
+        json.put("digest", idToken)
         json.put("platform", 1)
         val requestBody: RequestBody = RequestBody.create(MediaType.parse("application/json"), json.toString())
 
