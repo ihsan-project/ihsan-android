@@ -22,7 +22,7 @@ class AuthViewModel() : ViewModel() {
     private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Default
     private val scope = CoroutineScope(coroutineContext)
 
-    private lateinit var repository : com.khatm.client.repositories.UserRepository
+    private lateinit var userRepository : com.khatm.client.repositories.UserRepository
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var activity: AppCompatActivity
 
@@ -53,7 +53,7 @@ class AuthViewModel() : ViewModel() {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(authActivity, gso)
         activity = authActivity
-        repository = com.khatm.client.repositories.UserRepository(activity.application, scope)
+        userRepository = com.khatm.client.repositories.UserRepository(activity.application, scope)
     }
 
 
@@ -64,10 +64,10 @@ class AuthViewModel() : ViewModel() {
 
         scope.launch {
             googleAccount?.let {
-                Log.d("AuthViewModel", "Authenticate API ${it.email}")
+                Log.d("AuthViewModel", "Google SSO ${it}")
 
-                val authentication = repository.getAuthentication(it.id, it.email, it.displayName)
-                future.complete(authentication)
+                val auth = userRepository.getAuthorizationFromServer(it.id, it.email, it.displayName)
+                future.complete(auth)
             }
         }
 
@@ -77,7 +77,7 @@ class AuthViewModel() : ViewModel() {
     fun authorizedUserAsync() : Deferred<UserModel?> {
         val future = CompletableDeferred<UserModel?>()
 
-        repository.authenticatedUser?.observe(activity, Observer {
+        userRepository.authorizedUser?.observe(activity, Observer {
             future.complete(it)
         })
 
@@ -85,13 +85,13 @@ class AuthViewModel() : ViewModel() {
     }
 
     fun saveAuthorizedUserAsync(user: UserModel) : Deferred<Boolean> {
-        return repository.insert(user)
+        return userRepository.store(user)
     }
 
     fun logoutAsync() : Deferred<Boolean> {
         mGoogleSignInClient.signOut()
 
-        return repository.clear()
+        return userRepository.clear()
     }
 
     fun cancelAllRequests() = coroutineContext.cancel()

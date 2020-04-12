@@ -35,7 +35,7 @@ object ApiFactory {
 
     private val retrofit : Retrofit = Retrofit.Builder()
         .client(httpClient)
-        .baseUrl(BuildConfig.apiUrl)
+        .baseUrl("${BuildConfig.apiUrl}/api/")
         .addConverterFactory(MoshiConverterFactory.create())
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()
