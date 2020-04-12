@@ -25,6 +25,7 @@ android {
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
 
         it.buildConfigField 'String', "apiUrl", properties.getProperty("api_url", "\"https://staging-api.khatmapp.com/api\"")
+        it.buildConfigField 'String', "apiKey", properties.getProperty("api_key", "\"development-key\"")
     }
 }
 

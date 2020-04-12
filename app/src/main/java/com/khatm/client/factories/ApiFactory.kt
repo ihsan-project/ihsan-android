@@ -13,22 +13,15 @@ import java.io.IOException
 
 object ApiFactory {
 
-    //Creating Auth Interceptor to add api_key query in front of all the requests.
     private val authInterceptor = Interceptor {chain->
-        val newUrl = chain.request().url()
-            .newBuilder()
-//            .addQueryParameter("api_key", AppConstants.tmdbApiKey)
-            .build()
-
         val newRequest = chain.request()
             .newBuilder()
-            .url(newUrl)
+            .addHeader("x-api-key", BuildConfig.apiKey)
             .build()
 
         chain.proceed(newRequest)
     }
 
-    //OkhttpClient for building http request url
     private val httpClient = OkHttpClient().newBuilder()
         .addInterceptor(authInterceptor)
         .build()
