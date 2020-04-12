@@ -66,7 +66,7 @@ class AuthViewModel() : ViewModel() {
             googleAccount?.let {
                 Log.d("AuthViewModel", "Google SSO ${it}")
 
-                val auth = userRepository.getAuthorizationFromServer(it.id, it.email, it.displayName)
+                val auth = userRepository.getAuthorizationFromServer(it.id, it.email, it.displayName, it.idToken)
                 future.complete(auth)
             }
         }
