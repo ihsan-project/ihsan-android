@@ -27,7 +27,7 @@ platform :android do
   lane :build_production do
 
     download_production_certs
-    setup_env
+    setup_production_env
 
     gradle(
       task: "clean assemble",
@@ -74,7 +74,7 @@ platform :android do
   end
 
   desc "Setup Android Environment"
-  lane :setup_env do
+  lane :setup_production_env do
     # Normally Android Studio would automatically crate this file
     # ANDROID_HOME is part of the build environment, ex. /Users/build-user/Library/Android/sdk
 
@@ -82,6 +82,7 @@ platform :android do
     if File.open(properties_file, 'a+').grep(/sdk.dir/).empty?
       File.open(properties_file, 'a') do |f|
         f.puts "sdk.dir=#{ENV['ANDROID_HOME']}"
+        f.puts "api_url=\"#{ENV['API_URL']}\""
       end
     end
   end
