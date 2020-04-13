@@ -84,7 +84,7 @@ class AuthViewModel() : ViewModel() {
         return future
     }
 
-    fun saveAuthorizedUserAsync(user: UserModel) : Deferred<Boolean> {
+    fun storeAuthorizedUserAsync(user: UserModel) : Deferred<Boolean> {
         return userRepository.store(user)
     }
 

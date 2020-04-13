@@ -12,10 +12,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
-import okhttp3.RequestBody
 import retrofit2.Response
-import retrofit2.http.Body
 import retrofit2.http.GET
 
 class SettingsRepository(private val application : Application,
@@ -42,10 +39,10 @@ class SettingsRepository(private val application : Application,
             return dao?.settings
         }
 
-    fun store(user : SettingsModel) : Deferred<Boolean> {
+    fun store(settings : SettingsModel) : Deferred<Boolean> {
         val future = CompletableDeferred<Boolean>()
         scope.launch {
-            dao?.insert(user)
+            dao?.insert(settings)
 
             future.complete(true)
         }

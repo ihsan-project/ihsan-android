@@ -46,12 +46,12 @@ abstract class DatabaseFactory : RoomDatabase() {
 class Converters {
     @TypeConverter
     fun fromString(value: String?): Map<String, Int> {
-        val mapType: Type = object : TypeToken<Map<String, Int>>() {}.getType()
+        val mapType: Type = object : TypeToken<Map<String, Int>?>() {}.getType()
         return Gson().fromJson(value, mapType)
     }
 
     @TypeConverter
-    fun fromMap(map: Map<String, Int>): String {
+    fun fromMap(map: Map<String, Int>?): String {
         val gson = Gson()
         return gson.toJson(map)
     }

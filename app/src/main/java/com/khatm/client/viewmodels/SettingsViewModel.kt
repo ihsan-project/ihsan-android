@@ -32,4 +32,8 @@ class SettingsViewModel() : ViewModel() {
 
         return future
     }
+
+    fun storeSettingsAsync(settings: SettingsModel) : Deferred<Boolean> {
+        return settingsRepository.store(settings)
+    }
 }
