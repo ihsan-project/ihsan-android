@@ -12,6 +12,7 @@ import com.google.android.gms.common.api.ApiException
 import com.khatm.client.BuildConfig
 import com.khatm.client.R
 import com.khatm.client.models.UserModel
+import com.khatm.client.repositories.UserRepository
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -22,7 +23,7 @@ class AuthViewModel() : ViewModel() {
     private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Default
     private val scope = CoroutineScope(coroutineContext)
 
-    private lateinit var userRepository : com.khatm.client.repositories.UserRepository
+    private lateinit var userRepository : UserRepository
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var activity: AppCompatActivity
 
@@ -53,9 +54,8 @@ class AuthViewModel() : ViewModel() {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(authActivity, gso)
         activity = authActivity
-        userRepository = com.khatm.client.repositories.UserRepository(activity.application, scope)
+        userRepository = UserRepository(activity.application, scope)
     }
-
 
     fun authorizeWithServerAsync(googleAuthData: Intent) : Deferred<UserModel?> {
         val future = CompletableDeferred<UserModel?>()
