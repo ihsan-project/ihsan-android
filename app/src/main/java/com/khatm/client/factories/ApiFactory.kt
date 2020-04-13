@@ -1,9 +1,7 @@
 package com.khatm.client
 
 import android.util.Log
-import com.khatm.client.BuildConfig
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.khatm.client.models.KhatmApi
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Response
@@ -26,14 +24,12 @@ object ApiFactory {
         .addInterceptor(authInterceptor)
         .build()
 
-    private val retrofit : Retrofit = Retrofit.Builder()
+    val retrofit : Retrofit = Retrofit.Builder()
         .client(httpClient)
         .baseUrl("${BuildConfig.apiUrl}/api/")
         .addConverterFactory(MoshiConverterFactory.create())
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()
-
-    val api : KhatmApi = retrofit.create(KhatmApi::class.java)
 
     suspend fun <T : Any> call(call: suspend () -> Response<T>, errorMessage: String): T? {
 

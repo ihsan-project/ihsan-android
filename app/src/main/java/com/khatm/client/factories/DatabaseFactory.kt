@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.khatm.client.models.UserModel
-import com.khatm.client.models.UserDao
+import com.khatm.client.repositories.UserDao
 
 
 @Database(entities = [UserModel::class], version = 1, exportSchema = false)
