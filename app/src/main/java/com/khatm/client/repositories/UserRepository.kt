@@ -21,14 +21,13 @@ import retrofit2.http.POST
 
 class UserRepository(private val application : Application,
                      private  val scope : CoroutineScope) {
-    private val userDao: UserDao?
+    private val dao: UserDao?
+    private val api : UserApi = ApiFactory.retrofit.create(UserApi::class.java)
 
     init {
         val db = DatabaseFactory.getDatabase(application)
-        userDao = db?.userDao()
+        dao = db?.userDao()
     }
-
-    val api : UserApi = ApiFactory.retrofit.create(UserApi::class.java)
 
     suspend fun getAuthorizationFromServer(uuid: String?, email: String?, firstName: String?, idToken: String?) : UserModel? {
 
@@ -50,13 +49,13 @@ class UserRepository(private val application : Application,
 
     val authorizedUser: LiveData<UserModel?>?
         get() {
-            return userDao?.authorizedUser
+            return dao?.authorizedUser
         }
 
     fun store(user : UserModel) : Deferred<Boolean> {
         val future = CompletableDeferred<Boolean>()
         scope.launch {
-            userDao?.insert(user)
+            dao?.insert(user)
 
             future.complete(true)
         }
@@ -66,7 +65,7 @@ class UserRepository(private val application : Application,
     fun clear() : Deferred<Boolean> {
         val future = CompletableDeferred<Boolean>()
         scope.launch {
-            userDao?.deleteAll()
+            dao?.deleteAll()
 
             future.complete(true)
         }

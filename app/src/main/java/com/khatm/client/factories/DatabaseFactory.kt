@@ -4,15 +4,18 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.khatm.client.models.SettingsModel
 import com.khatm.client.models.UserModel
 import com.khatm.client.repositories.UserDao
+import com.khatm.client.repositories.SettingsDao
 
 
-@Database(entities = [UserModel::class], version = 1, exportSchema = false)
+@Database(entities = [UserModel::class, SettingsModel::class], version = 1, exportSchema = false)
 abstract class DatabaseFactory : RoomDatabase() {
 
     /* Configuration for DAOs */
     abstract fun userDao(): UserDao
+    abstract fun settingsDao(): SettingsDao
 
 
     /* Internal Workings */
