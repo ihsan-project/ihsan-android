@@ -54,6 +54,7 @@ class AuthActivity : BaseActivity() {
                 val settings = settingsViewModel.getSettingsAsync().await()
 
                 settings?.let {
+                    Log.d("SettingsDebug", "got settings ${settings}")
                     settingsViewModel.storeSettingsAsync(it).await()
 
                     Log.d("AuthActivity", "Load settings success")

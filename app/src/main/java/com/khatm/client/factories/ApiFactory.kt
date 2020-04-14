@@ -40,7 +40,7 @@ object ApiFactory {
             is Result.Success ->
                 data = result.data
             is Result.Error -> {
-                // TODO: If 404 then log user out
+                // TODO: If 401 then log user out
                 Log.e("ApiFactory", "$errorMessage; ${result.exception}")
             }
         }
@@ -51,6 +51,10 @@ object ApiFactory {
     private suspend fun <T: Any> safeApiResult(call: suspend ()-> Response<T>, errorMessage: String) : Result<T> {
         val response = call.invoke()
         if (response.isSuccessful) {
+            if (response.code() == 204) {
+                return Result.SuccessEmpty()
+            }
+
             return Result.Success(response.body()!!)
         }
 
@@ -60,5 +64,6 @@ object ApiFactory {
 
 sealed class Result<out T: Any> {
     data class Success<out T : Any>(val data: T) : Result<T>()
+    class SuccessEmpty() : Result<Nothing>()
     data class Error(val exception: Exception) : Result<Nothing>()
 }
