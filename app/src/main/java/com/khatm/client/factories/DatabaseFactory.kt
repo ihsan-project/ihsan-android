@@ -2,16 +2,14 @@ package com.khatm.client.factories
 
 import android.content.Context
 import androidx.room.*
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.khatm.client.models.Constants
 import com.khatm.client.models.Features
 import com.khatm.client.models.SettingsModel
 import com.khatm.client.models.UserModel
 import com.khatm.client.repositories.SettingsDao
 import com.khatm.client.repositories.UserDao
+import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import java.lang.reflect.Type
 
 
 @Database(entities = [UserModel::class, SettingsModel::class], version = 1, exportSchema = false)
@@ -47,43 +45,53 @@ abstract class DatabaseFactory : RoomDatabase() {
 }
 
 class Converters {
-    // TODO: Replace this with Moshi so not using Gson anywhere
-
     @TypeConverter
-    fun fromStringToMap(value: String?): Map<String, Int> {
-        val mapType: Type = object : TypeToken<Map<String, Int>?>() {}.getType()
-        return Gson().fromJson(value, mapType)
+    fun fromStringToMap(value: String?): Map<String, Int>? {
+        val moshi = Moshi.Builder().build()
+        val jsonAdapter: JsonAdapter<Map<String, Int>> = moshi.adapter<Map<String, Int>>(Map::class.java)
+
+        return jsonAdapter.fromJson(value)
     }
 
     @TypeConverter
     fun fromMap(value: Map<String, Int>?): String {
-        val gson = Gson()
-        return gson.toJson(value)
+        val moshi = Moshi.Builder().build()
+        val jsonAdapter: JsonAdapter<Map<String, Int>?> = moshi.adapter<Map<String, Int>?>(Map::class.java)
+
+        return jsonAdapter.toJson(value)
     }
 
 
     @TypeConverter
-    fun fromStringToConstants(value: String?): Constants {
-        val mapType: Type = object : TypeToken<Constants?>() {}.getType()
-        return Gson().fromJson(value, mapType)
+    fun fromStringToConstants(value: String?): Constants? {
+        val moshi = Moshi.Builder().build()
+        val jsonAdapter: JsonAdapter<Constants?> = moshi.adapter<Constants?>(Constants::class.java)
+
+        return jsonAdapter.fromJson(value)
     }
 
     @TypeConverter
     fun fromConstants(value: Constants?): String {
-        val gson = Gson()
-        return gson.toJson(value)
+        val moshi = Moshi.Builder().build()
+        val jsonAdapter: JsonAdapter<Constants?> = moshi.adapter<Constants?>(Constants::class.java)
+
+        return jsonAdapter.toJson(value)
     }
 
 
     @TypeConverter
-    fun fromStringToFeatures(value: String?): Features {
-        val mapType: Type = object : TypeToken<Features?>() {}.getType()
-        return Gson().fromJson(value, mapType)
+    fun fromStringToFeatures(value: String?): Features? {
+        val moshi = Moshi.Builder().build()
+        val jsonAdapter: JsonAdapter<Features?> = moshi.adapter<Features?>(Features::class.java)
+
+        return jsonAdapter.fromJson(value)
     }
 
     @TypeConverter
     fun fromFeatures(value: Features?): String {
-        val gson = Gson()
-        return gson.toJson(value)
+        val moshi = Moshi.Builder().build()
+        val jsonAdapter: JsonAdapter<Features?> = moshi.adapter<Features?>(Features::class.java)
+
+        return jsonAdapter.toJson(value)
     }
 }
