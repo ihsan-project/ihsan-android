@@ -25,7 +25,7 @@ class LaunchActivity : AppCompatActivity() {
         super.onStart()
 
         GlobalScope.launch(Dispatchers.Main) {
-            val user = authViewModel.authorizedUserAsync().await()
+            val user = authViewModel.authorizedUserAsync.await()
             var intent = Intent(this@LaunchActivity, AuthActivity::class.java)
             
             user?.access?.let {

@@ -74,15 +74,16 @@ class AuthViewModel() : ViewModel() {
         return future
     }
 
-    fun authorizedUserAsync() : Deferred<UserModel?> {
-        val future = CompletableDeferred<UserModel?>()
+    val authorizedUserAsync : Deferred<UserModel?>
+        get() {
+            val future = CompletableDeferred<UserModel?>()
 
-        userRepository.authorizedUser?.observe(activity, Observer {
-            future.complete(it)
-        })
+            userRepository.authorizedUser?.observe(activity, Observer {
+                future.complete(it)
+            })
 
-        return future
-    }
+            return future
+        }
 
     fun storeAuthorizedUserAsync(user: UserModel) : Deferred<Boolean> {
         return userRepository.store(user)

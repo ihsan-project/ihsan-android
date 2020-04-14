@@ -14,6 +14,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 
 class SettingsRepository(private val application : Application,
                          private  val scope : CoroutineScope
@@ -26,9 +27,9 @@ class SettingsRepository(private val application : Application,
         dao = db?.settingsDao()
     }
 
-    suspend fun getSettingsFromServer() : SettingsModel? {
+    suspend fun getSettingsFromServer(currentVersion: Int) : SettingsModel? {
         val response = ApiFactory.call(
-            call = { api.getSettingsAsync().await() },
+            call = { api.getSettingsAsync(currentVersion).await() },
             errorMessage = "Error Fetching Settings")
 
         return response;
@@ -53,14 +54,14 @@ class SettingsRepository(private val application : Application,
 
 interface SettingsApi {
 
-    @GET("settings")
-    fun getSettingsAsync() : Deferred<Response<SettingsModel>>
+    @GET("settings/{version}")
+    fun getSettingsAsync(@Path("version") version: Int) : Deferred<Response<SettingsModel>>
 }
 
 @Dao
 interface SettingsDao {
 
-    @get:Query("SELECT * from settings")
+    @get:Query("SELECT * from settings ORDER BY version DESC")
     val settings: LiveData<SettingsModel?>
 
     @Insert

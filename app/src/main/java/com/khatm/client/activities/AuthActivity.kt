@@ -51,7 +51,7 @@ class AuthActivity : BaseActivity() {
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val settings = settingsViewModel.settingsAsync().await()
+                val settings = settingsViewModel.getSettingsAsync().await()
 
                 settings?.let {
                     settingsViewModel.storeSettingsAsync(it).await()

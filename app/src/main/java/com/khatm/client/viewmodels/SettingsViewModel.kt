@@ -2,6 +2,7 @@ package com.khatm.client.viewmodels
 
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.khatm.client.models.SettingsModel
 import com.khatm.client.repositories.SettingsRepository
@@ -22,16 +23,36 @@ class SettingsViewModel() : ViewModel() {
         settingsRepository = SettingsRepository(activity.application, scope)
     }
 
-    fun settingsAsync() : Deferred<SettingsModel?> {
+    fun getSettingsAsync() : Deferred<SettingsModel?> {
         val future = CompletableDeferred<SettingsModel?>()
 
         scope.launch {
-            val settings = settingsRepository.getSettingsFromServer()
+            val currentSettings = currentSettingsAsync.await()
+
+            var settings: SettingsModel?
+            if (currentSettings == null) {
+                // This might the first time the user is opening the app
+                settings = settingsRepository.getSettingsFromServer(0)
+            } else {
+                settings = settingsRepository.getSettingsFromServer(currentSettings.version)
+            }
+
             future.complete(settings)
         }
 
         return future
     }
+
+    val currentSettingsAsync : Deferred<SettingsModel?>
+        get() {
+            val future = CompletableDeferred<SettingsModel?>()
+
+            settingsRepository.settings?.observe(activity, Observer {
+                future.complete(it)
+            })
+
+            return future
+        }
 
     fun storeSettingsAsync(settings: SettingsModel) : Deferred<Boolean> {
         return settingsRepository.store(settings)
