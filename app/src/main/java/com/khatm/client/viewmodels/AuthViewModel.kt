@@ -11,7 +11,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.khatm.client.BuildConfig
 import com.khatm.client.R
+import com.khatm.client.models.SettingsModel
 import com.khatm.client.models.UserModel
+import com.khatm.client.repositories.SettingsRepository
 import com.khatm.client.repositories.UserRepository
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -24,6 +26,7 @@ class AuthViewModel() : ViewModel() {
     private val scope = CoroutineScope(coroutineContext)
 
     private lateinit var userRepository : UserRepository
+    private lateinit var settingsRepository: SettingsRepository
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var activity: AppCompatActivity
 
@@ -55,6 +58,7 @@ class AuthViewModel() : ViewModel() {
         mGoogleSignInClient = GoogleSignIn.getClient(authActivity, gso)
         activity = authActivity
         userRepository = UserRepository(activity.application, scope)
+        settingsRepository = SettingsRepository(activity.application, scope)
     }
 
     fun authorizeWithServerAsync(googleAuthData: Intent) : Deferred<UserModel?> {
@@ -63,12 +67,17 @@ class AuthViewModel() : ViewModel() {
             ApiException::class.java)
 
         scope.launch {
-            googleAccount?.let {
-                Log.d("AuthViewModel", "Google SSO ${it}")
+            val settings = currentSettingsAsync.await()
 
-                val auth = userRepository.getAuthorizationFromServer(it.id, it.email, it.displayName, it.idToken)
-                future.complete(auth)
-            }
+            Log.d("AuthViewModel", "Google SSO Success")
+            val auth = userRepository.getAuthorizationFromServer(
+                googleAccount?.id,
+                googleAccount?.email,
+                googleAccount?.displayName,
+                googleAccount?.idToken,
+                settings?.constants?.platforms?.get("google")
+            )
+            future.complete(auth)
         }
 
         return future
@@ -81,6 +90,20 @@ class AuthViewModel() : ViewModel() {
             userRepository.authorizedUser?.observe(activity, Observer {
                 future.complete(it)
             })
+
+            return future
+        }
+
+    val currentSettingsAsync : Deferred<SettingsModel?>
+        get() {
+            val future = CompletableDeferred<SettingsModel?>()
+
+            // Dispatch to main thread: https://stackoverflow.com/a/54090499
+            GlobalScope.launch(Dispatchers.Main) {
+                settingsRepository.settings?.observe(activity, Observer {
+                    future.complete(it)
+                })
+            }
 
             return future
         }
