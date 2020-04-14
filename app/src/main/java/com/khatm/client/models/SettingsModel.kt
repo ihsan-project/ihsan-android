@@ -6,6 +6,14 @@ import com.squareup.moshi.Json
 @Entity(tableName = "settings")
 data class SettingsModel(
     @PrimaryKey val version: Int,
-    @field:Json(name = "bookTypes") val books: Map<String, Int>,
+    val constants: Constants,
+    val features: Features
+)
+
+data class Constants(
+    @field:Json(name = "book_types") val books: Map<String, Int>,
     val platforms: Map<String, Int>
+)
+
+class Features(
 )

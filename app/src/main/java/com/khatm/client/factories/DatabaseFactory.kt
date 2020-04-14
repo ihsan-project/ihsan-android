@@ -4,10 +4,13 @@ import android.content.Context
 import androidx.room.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.khatm.client.models.Constants
+import com.khatm.client.models.Features
 import com.khatm.client.models.SettingsModel
 import com.khatm.client.models.UserModel
 import com.khatm.client.repositories.SettingsDao
 import com.khatm.client.repositories.UserDao
+import com.squareup.moshi.Moshi
 import java.lang.reflect.Type
 
 
@@ -44,15 +47,43 @@ abstract class DatabaseFactory : RoomDatabase() {
 }
 
 class Converters {
+    // TODO: Replace this with Moshi so not using Gson anywhere
+
     @TypeConverter
-    fun fromString(value: String?): Map<String, Int> {
+    fun fromStringToMap(value: String?): Map<String, Int> {
         val mapType: Type = object : TypeToken<Map<String, Int>?>() {}.getType()
         return Gson().fromJson(value, mapType)
     }
 
     @TypeConverter
-    fun fromMap(map: Map<String, Int>?): String {
+    fun fromMap(value: Map<String, Int>?): String {
         val gson = Gson()
-        return gson.toJson(map)
+        return gson.toJson(value)
+    }
+
+
+    @TypeConverter
+    fun fromStringToConstants(value: String?): Constants {
+        val mapType: Type = object : TypeToken<Constants?>() {}.getType()
+        return Gson().fromJson(value, mapType)
+    }
+
+    @TypeConverter
+    fun fromConstants(value: Constants?): String {
+        val gson = Gson()
+        return gson.toJson(value)
+    }
+
+
+    @TypeConverter
+    fun fromStringToFeatures(value: String?): Features {
+        val mapType: Type = object : TypeToken<Features?>() {}.getType()
+        return Gson().fromJson(value, mapType)
+    }
+
+    @TypeConverter
+    fun fromFeatures(value: Features?): String {
+        val gson = Gson()
+        return gson.toJson(value)
     }
 }
