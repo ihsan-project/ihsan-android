@@ -49,7 +49,7 @@ class AuthActivity : BaseActivity() {
                     val user = authViewModel.authorizeWithServerAsync(it).await()
 
                     if (user?.access != null) {
-                        authViewModel.saveAuthorizedUserAsync(user).await()
+                        authViewModel.storeAuthorizedUserAsync(user).await()
 
                         Log.d("AuthActivity", "Login successful")
 
@@ -64,7 +64,7 @@ class AuthActivity : BaseActivity() {
                     dismissLoading()
                 }
                 catch (e: ApiException) {
-                    Log.d("AuthActivity", "Failed: $e")
+                    Log.d("AuthActivity", "Failed Auth: $e")
                     Toast.makeText(this@AuthActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
                     dismissLoading()
                 }
