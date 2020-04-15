@@ -2,6 +2,8 @@ package com.khatm.client.models
 
 import androidx.room.*
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 
 @Entity(tableName = "settings")
 data class SettingsModel(
@@ -17,3 +19,21 @@ data class Constants(
 
 class Features(
 )
+
+
+// Converters
+
+class SettingsConverters {
+    val constantAdapter: JsonAdapter<Constants?> = Moshi.Builder().build().adapter<Constants?>(Constants::class.java)
+    val featureAdapter: JsonAdapter<Features?> = Moshi.Builder().build().adapter<Features?>(Features::class.java)
+
+    @TypeConverter
+    fun fromStringToConstants(value: String?): Constants? { return constantAdapter.fromJson(value) }
+    @TypeConverter
+    fun fromConstants(value: Constants?): String { return constantAdapter.toJson(value) }
+
+    @TypeConverter
+    fun fromStringToFeatures(value: String?): Features? { return featureAdapter.fromJson(value) }
+    @TypeConverter
+    fun fromFeatures(value: Features?): String { return featureAdapter.toJson(value) }
+}
