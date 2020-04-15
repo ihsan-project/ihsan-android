@@ -30,10 +30,10 @@ class SettingsConverters {
     @TypeConverter
     fun fromStringToConstants(value: String?): Constants? { return constantAdapter.fromJson(value) }
     @TypeConverter
-    fun fromConstants(value: Constants?): String { return constantAdapter.toJson(value) }
+    fun fromConstantsToString(value: Constants?): String { return constantAdapter.toJson(value) }
 
     @TypeConverter
     fun fromStringToFeatures(value: String?): Features? { return featureAdapter.fromJson(value) }
     @TypeConverter
-    fun fromFeatures(value: Features?): String { return featureAdapter.toJson(value) }
+    fun fromFeaturesToString(value: Features?): String { return featureAdapter.toJson(value) }
 }
