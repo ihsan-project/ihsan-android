@@ -45,7 +45,6 @@ object ApiFactory {
             is Result.Success ->
                 data = result.data
             is Result.Error -> {
-                // TODO: If 401 then log user out
                 Log.e("ApiFactory", "$errorMessage; ${result.exception}")
                 GlobalScope.launch(Dispatchers.Main) {
                     Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
@@ -53,6 +52,13 @@ object ApiFactory {
             }
             is Result.SuccessEmpty ->
                 Log.e("ApiFactory", "No Data")
+            is Result.ErrorUnauthenticated -> {
+                Log.e("ApiFactory", "401 Unauthorized")
+                // TODO: Logout of the application
+                GlobalScope.launch(Dispatchers.Main) {
+                    Toast.makeText(context, "Not Authorized", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         return data
@@ -60,12 +66,15 @@ object ApiFactory {
 
     private suspend fun <T: Any> safeApiResult(call: suspend ()-> Response<T>, errorMessage: String) : Result<T> {
         val response = call.invoke()
+        // Android Studio 3.5.2 has a hard time with debug breakpoints within this block
         if (response.isSuccessful) {
             if (response.code() == 204) {
                 return Result.SuccessEmpty()
             }
 
             return Result.Success(response.body()!!)
+        } else if (response.code() == 401) {
+            return Result.ErrorUnauthenticated()
         }
 
         return Result.Error(IOException(errorMessage))
@@ -76,4 +85,5 @@ sealed class Result<out T: Any> {
     data class Success<out T : Any>(val data: T) : Result<T>()
     class SuccessEmpty() : Result<Nothing>()
     data class Error(val exception: Exception) : Result<Nothing>()
+    class ErrorUnauthenticated() : Result<Nothing>()
 }
