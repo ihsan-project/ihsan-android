@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.api.ApiException
+import com.khatm.client.ApiFactory
 import com.khatm.client.R
 import com.khatm.client.extensions.BaseActivity
 import com.khatm.client.extensions.dismissLoading
@@ -49,6 +50,7 @@ class AuthActivity : BaseActivity() {
                     val user = authViewModel.authorizeWithServerAsync(it).await()
 
                     if (user?.access != null) {
+                        ApiFactory.authToken = user?.access
                         authViewModel.storeAuthorizedUserAsync(user).await()
 
                         Log.d("AuthActivity", "Login successful")

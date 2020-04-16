@@ -10,7 +10,8 @@ data class Books(
 
 @Entity(tableName = "books")
 data class BookModel(
-    @PrimaryKey val version: Int,
-    val constants: Constants,
-    val features: Features
+    @PrimaryKey val id: Int,
+    @field:Json(name = "slug_id") val slug: String,
+    val title: String,
+    val type: Int
 )

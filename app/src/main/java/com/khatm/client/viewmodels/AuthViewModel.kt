@@ -9,6 +9,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.khatm.client.ApiFactory
 import com.khatm.client.BuildConfig
 import com.khatm.client.R
 import com.khatm.client.models.SettingsModel
@@ -101,6 +102,7 @@ class AuthViewModel() : ViewModel() {
         mGoogleSignInClient.signOut()
 
         return userRepository.clear()
+        ApiFactory.authToken = null
     }
 
     fun getSettingsFromServerAsync() : Deferred<SettingsModel?> {
