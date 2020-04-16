@@ -30,7 +30,8 @@ class SettingsRepository(private val application : Application,
     suspend fun getSettingsFromServer(currentVersion: Int) : SettingsModel? {
         val response = ApiFactory.call(
             call = { api.getSettingsAsync(currentVersion).await() },
-            errorMessage = "Error Fetching Settings")
+            errorMessage = "Server not responding",
+            context = application.applicationContext)
 
         return response;
     }

@@ -1,7 +1,12 @@
 package com.khatm.client
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Response
@@ -31,7 +36,7 @@ object ApiFactory {
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()
 
-    suspend fun <T : Any> call(call: suspend () -> Response<T>, errorMessage: String): T? {
+    suspend fun <T : Any> call(call: suspend () -> Response<T>, errorMessage: String, context: Context): T? {
 
         val result : Result<T> = safeApiResult(call, errorMessage)
         var data : T? = null
@@ -42,7 +47,12 @@ object ApiFactory {
             is Result.Error -> {
                 // TODO: If 401 then log user out
                 Log.e("ApiFactory", "$errorMessage; ${result.exception}")
+                GlobalScope.launch(Dispatchers.Main) {
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                }
             }
+            is Result.SuccessEmpty ->
+                Log.e("ApiFactory", "No Data")
         }
 
         return data
@@ -58,7 +68,7 @@ object ApiFactory {
             return Result.Success(response.body()!!)
         }
 
-        return Result.Error(IOException("API Error - $errorMessage"))
+        return Result.Error(IOException(errorMessage))
     }
 }
 

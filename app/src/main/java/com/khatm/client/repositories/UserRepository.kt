@@ -42,7 +42,8 @@ class UserRepository(private val application : Application,
 
         val response = ApiFactory.call(
             call = { api.getAuthorizationAsync(requestBody).await() },
-            errorMessage = "Error Fetching Authorization")
+            errorMessage = "Error with authorization",
+            context = application.applicationContext)
 
         return response;
     }
