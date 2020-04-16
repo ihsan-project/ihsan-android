@@ -16,13 +16,17 @@ import java.io.IOException
 
 object ApiFactory {
 
+    var authToken: String? = null
     private val authInterceptor = Interceptor {chain->
         val newRequest = chain.request()
             .newBuilder()
             .addHeader("x-api-key", BuildConfig.apiKey)
-            .build()
 
-        chain.proceed(newRequest)
+        authToken?.let {
+            newRequest.addHeader("Authorization", it)
+        }
+
+        chain.proceed(newRequest.build())
     }
 
     private val httpClient = OkHttpClient().newBuilder()

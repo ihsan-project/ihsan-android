@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.api.ApiException
+import com.khatm.client.ApiFactory
 import com.khatm.client.extensions.dismissLoading
 import com.khatm.client.extensions.displayLoading
 import com.khatm.client.viewmodels.AuthViewModel
@@ -52,6 +53,7 @@ class LaunchActivity : AppCompatActivity() {
                 if (it.isNotBlank()) {
                     Log.d("LaunchActivity", "Already Logged in")
                     intent = Intent(this@LaunchActivity, HomeActivity::class.java)
+                    ApiFactory.authToken = it
                 }
             }
 
