@@ -13,7 +13,7 @@ import com.khatm.client.BuildConfig
 import com.khatm.client.R
 import com.khatm.client.models.SettingsModel
 import com.khatm.client.models.UserModel
-import com.khatm.client.repositories.SettingsRepository
+import com.khatm.client.repositories.ContentRepository
 import com.khatm.client.repositories.UserRepository
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -26,7 +26,7 @@ class AuthViewModel() : ViewModel() {
     private val scope = CoroutineScope(coroutineContext)
 
     private lateinit var userRepository : UserRepository
-    private lateinit var settingsRepository: SettingsRepository
+    private lateinit var contentRepository: ContentRepository
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var activity: AppCompatActivity
 
@@ -58,7 +58,7 @@ class AuthViewModel() : ViewModel() {
         mGoogleSignInClient = GoogleSignIn.getClient(authActivity, gso)
         activity = authActivity
         userRepository = UserRepository(activity.application, scope)
-        settingsRepository = SettingsRepository(activity.application, scope)
+        contentRepository = ContentRepository(activity.application, scope)
     }
 
     fun authorizeWithServerAsync(googleAuthData: Intent) : Deferred<UserModel?> {
@@ -94,20 +94,6 @@ class AuthViewModel() : ViewModel() {
             return future
         }
 
-    val currentSettingsAsync : Deferred<SettingsModel?>
-        get() {
-            val future = CompletableDeferred<SettingsModel?>()
-
-            // Dispatch to main thread: https://stackoverflow.com/a/54090499
-            GlobalScope.launch(Dispatchers.Main) {
-                settingsRepository.settings?.observe(activity, Observer {
-                    future.complete(it)
-                })
-            }
-
-            return future
-        }
-
     fun storeAuthorizedUserAsync(user: UserModel) : Deferred<Boolean> {
         return userRepository.store(user)
     }
@@ -116,6 +102,44 @@ class AuthViewModel() : ViewModel() {
         mGoogleSignInClient.signOut()
 
         return userRepository.clear()
+    }
+
+    fun getSettingsAsync() : Deferred<SettingsModel?> {
+        val future = CompletableDeferred<SettingsModel?>()
+
+        scope.launch {
+            val currentSettings = currentSettingsAsync.await()
+
+            var settings: SettingsModel?
+            if (currentSettings == null) {
+                // This might the first time the user is opening the app
+                settings = contentRepository.getSettingsFromServer(0)
+            } else {
+                settings = contentRepository.getSettingsFromServer(currentSettings.version)
+            }
+
+            future.complete(settings)
+        }
+
+        return future
+    }
+
+    val currentSettingsAsync : Deferred<SettingsModel?>
+        get() {
+            val future = CompletableDeferred<SettingsModel?>()
+
+            // Dispatch to main thread: https://stackoverflow.com/a/54090499
+            GlobalScope.launch(Dispatchers.Main) {
+                contentRepository.settings?.observe(activity, Observer {
+                    future.complete(it)
+                })
+            }
+
+            return future
+        }
+
+    fun storeSettingsAsync(settings: SettingsModel) : Deferred<Boolean> {
+        return contentRepository.store(settings)
     }
 
     fun cancelAllRequests() = coroutineContext.cancel()

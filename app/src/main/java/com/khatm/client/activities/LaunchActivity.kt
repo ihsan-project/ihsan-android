@@ -10,7 +10,6 @@ import com.google.android.gms.common.api.ApiException
 import com.khatm.client.extensions.dismissLoading
 import com.khatm.client.extensions.displayLoading
 import com.khatm.client.viewmodels.AuthViewModel
-import com.khatm.client.viewmodels.SettingsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -18,16 +17,12 @@ import kotlinx.coroutines.launch
 
 class LaunchActivity : AppCompatActivity() {
     private lateinit var authViewModel: AuthViewModel
-    private lateinit var settingsViewModel: SettingsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         authViewModel = ViewModelProviders.of(this).get(AuthViewModel::class.java)
         authViewModel.setupFor(this)
-
-        settingsViewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
-        settingsViewModel.setupFor(this)
     }
 
     override fun onStart() {
@@ -37,10 +32,10 @@ class LaunchActivity : AppCompatActivity() {
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val settings = settingsViewModel.getSettingsAsync().await()
+                val settings = authViewModel.getSettingsAsync().await()
 
                 settings?.let {
-                    settingsViewModel.storeSettingsAsync(it).await()
+                    authViewModel.storeSettingsAsync(it).await()
 
                     Log.d("LaunchActivity", "Load settings success")
                 }

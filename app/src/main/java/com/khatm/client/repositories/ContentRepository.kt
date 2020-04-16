@@ -16,8 +16,8 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-class SettingsRepository(private val application : Application,
-                         private  val scope : CoroutineScope
+class ContentRepository(private val application : Application,
+                        private  val scope : CoroutineScope
 ) {
     private val dao: SettingsDao?
     private val api : SettingsApi = ApiFactory.retrofit.create(SettingsApi::class.java)
