@@ -32,7 +32,7 @@ class LaunchActivity : AppCompatActivity() {
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val settings = authViewModel.getSettingsAsync().await()
+                val settings = authViewModel.getSettingsFromServerAsync().await()
 
                 settings?.let {
                     authViewModel.storeSettingsAsync(it).await()

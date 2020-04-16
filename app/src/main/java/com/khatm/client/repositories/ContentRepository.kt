@@ -7,6 +7,8 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.khatm.client.ApiFactory
 import com.khatm.client.factories.DatabaseFactory
+import com.khatm.client.models.BookModel
+import com.khatm.client.models.Books
 import com.khatm.client.models.SettingsModel
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -19,17 +21,20 @@ import retrofit2.http.Path
 class ContentRepository(private val application : Application,
                         private  val scope : CoroutineScope
 ) {
-    private val dao: SettingsDao?
-    private val api : SettingsApi = ApiFactory.retrofit.create(SettingsApi::class.java)
+    private val settingsDao: SettingsDao?
+    private val settingsApi : SettingsApi = ApiFactory.retrofit.create(SettingsApi::class.java)
+    private val booksDao: BooksDao?
+    private val booksApi : BooksApi = ApiFactory.retrofit.create(BooksApi::class.java)
 
     init {
         val db = DatabaseFactory.getDatabase(application)
-        dao = db?.settingsDao()
+        settingsDao = db?.settingsDao()
+        booksDao = db?.booksDao()
     }
 
     suspend fun getSettingsFromServer(currentVersion: Int) : SettingsModel? {
         val response = ApiFactory.call(
-            call = { api.getSettingsAsync(currentVersion).await() },
+            call = { settingsApi.getSettingsAsync(currentVersion).await() },
             errorMessage = "Server not responding",
             context = application.applicationContext)
 
@@ -38,13 +43,37 @@ class ContentRepository(private val application : Application,
 
     val settings: LiveData<SettingsModel?>?
         get() {
-            return dao?.settings
+            return settingsDao?.settings
         }
 
     fun store(settings : SettingsModel) : Deferred<Boolean> {
         val future = CompletableDeferred<Boolean>()
         scope.launch {
-            dao?.insert(settings)
+            settingsDao?.insert(settings)
+
+            future.complete(true)
+        }
+        return future
+    }
+
+    suspend fun getBooksFromServer() : Books? {
+        val response = ApiFactory.call(
+            call = { booksApi.getBooksAsync().await() },
+            errorMessage = "Could not load books",
+            context = application.applicationContext)
+
+        return response;
+    }
+
+    val books: LiveData<List<BookModel>?>?
+        get() {
+            return booksDao?.books
+        }
+
+    fun store(books : List<BookModel>) : Deferred<Boolean> {
+        val future = CompletableDeferred<Boolean>()
+        scope.launch {
+            booksDao?.insert(books)
 
             future.complete(true)
         }
@@ -52,6 +81,7 @@ class ContentRepository(private val application : Application,
     }
 
 }
+
 
 interface SettingsApi {
 
@@ -67,4 +97,21 @@ interface SettingsDao {
 
     @Insert
     fun insert(user: SettingsModel)
+}
+
+
+interface BooksApi {
+
+    @GET("books")
+    fun getBooksAsync() : Deferred<Response<Books>>
+}
+
+@Dao
+interface BooksDao {
+
+    @get:Query("SELECT * from books")
+    val books: LiveData<List<BookModel>?>
+
+    @Insert
+    fun insert(books: List<BookModel>)
 }

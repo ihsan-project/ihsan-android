@@ -21,14 +21,17 @@ import kotlin.coroutines.CoroutineContext
 
 class AuthViewModel() : ViewModel() {
 
+    // TODO: These are probably going to be required in every VM
+    //       Is it possilbe to create a Parent class VM that all VMs inherit from?
+    //       Or extend VMs so they all include these common properties?
     private val parentJob = Job()
     private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Default
     private val scope = CoroutineScope(coroutineContext)
+    private lateinit var activity: AppCompatActivity
 
     private lateinit var userRepository : UserRepository
     private lateinit var contentRepository: ContentRepository
     private lateinit var mGoogleSignInClient: GoogleSignInClient
-    private lateinit var activity: AppCompatActivity
 
     val signInIntent: Intent
         get() {
@@ -44,17 +47,12 @@ class AuthViewModel() : ViewModel() {
         }
 
     fun setupFor(authActivity: AppCompatActivity) {
-        /*
-         * Configure sign-in to request the user's ID, email address, and basic profile.
-         * ID and basic profile are included in DEFAULT_SIGN_IN.
-         */
         val gso: GoogleSignInOptions = GoogleSignInOptions
             .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(authActivity.getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
 
-        // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(authActivity, gso)
         activity = authActivity
         userRepository = UserRepository(activity.application, scope)
@@ -87,6 +85,7 @@ class AuthViewModel() : ViewModel() {
         get() {
             val future = CompletableDeferred<UserModel?>()
 
+            // TODO: Does this need to be wrapped in a main queue as well?
             userRepository.authorizedUser?.observe(activity, Observer {
                 future.complete(it)
             })
@@ -104,7 +103,7 @@ class AuthViewModel() : ViewModel() {
         return userRepository.clear()
     }
 
-    fun getSettingsAsync() : Deferred<SettingsModel?> {
+    fun getSettingsFromServerAsync() : Deferred<SettingsModel?> {
         val future = CompletableDeferred<SettingsModel?>()
 
         scope.launch {
