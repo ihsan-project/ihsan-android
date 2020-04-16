@@ -2,6 +2,7 @@ package com.khatm.client.viewmodels
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import com.khatm.client.models.BookModel
 import com.khatm.client.models.Books
 import com.khatm.client.repositories.ContentRepository
@@ -9,7 +10,7 @@ import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 
-class ChallengeViewModel {
+class ChallengeViewModel() : ViewModel() {
     private val parentJob = Job()
     private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Default
     private val scope = CoroutineScope(coroutineContext)

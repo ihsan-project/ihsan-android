@@ -2,20 +2,26 @@ package com.khatm.client.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.common.api.ApiException
 import com.khatm.client.R
 import com.khatm.client.extensions.BaseActivity
+import com.khatm.client.extensions.dismissLoading
+import com.khatm.client.extensions.displayLoading
 import com.khatm.client.viewmodels.AuthViewModel
+import com.khatm.client.viewmodels.ChallengeViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class HomeActivity : BaseActivity() {
+    private lateinit var challengeViewModel: ChallengeViewModel
 
     lateinit var signOutButton: Button
     lateinit var textViewName : TextView
@@ -26,6 +32,9 @@ class HomeActivity : BaseActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        challengeViewModel = ViewModelProviders.of(this).get(ChallengeViewModel::class.java)
+        challengeViewModel.setupFor(this)
 
         textViewName = findViewById(R.id.TextViewName)
         textViewEmail = findViewById(R.id.textViewEmail)
@@ -47,6 +56,32 @@ class HomeActivity : BaseActivity() {
             textViewName.setText("Name: " + name)
             textViewEmail.setText("Email: " + email)
             textViewId.setText("ID: " + id)
+        }
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+
+        displayLoading()
+
+        GlobalScope.launch(Dispatchers.Main) {
+            try {
+                val settings = challengeViewModel.getBooksFromServerAsync().await()
+
+                settings?.let {
+                    challengeViewModel.storeBooksAsync(it.books).await()
+
+                    Log.d("HomeActivity", "Load settings success")
+                }
+            }
+            catch (e: ApiException) {
+                Log.d("HomeActivity", "Failed Settings: $e")
+                Toast.makeText(this@HomeActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
+            }
+
+
+            dismissLoading()
         }
     }
 
