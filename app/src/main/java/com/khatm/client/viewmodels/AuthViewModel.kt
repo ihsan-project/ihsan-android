@@ -86,10 +86,11 @@ class AuthViewModel() : ViewModel() {
         get() {
             val future = CompletableDeferred<UserModel?>()
 
-            // TODO: Does this need to be wrapped in a main queue as well?
-            userRepository.authorizedUser?.observe(activity, Observer {
-                future.complete(it)
-            })
+            GlobalScope.launch(Dispatchers.Main) {
+                userRepository.authorizedUser?.observe(activity, Observer {
+                    future.complete(it)
+                })
+            }
 
             return future
         }
