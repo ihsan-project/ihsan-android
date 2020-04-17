@@ -73,7 +73,6 @@ class UserRepository(private val application : Application,
 
         return future
     }
-
 }
 
 interface UserApi {
