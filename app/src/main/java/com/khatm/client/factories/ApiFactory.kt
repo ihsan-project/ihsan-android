@@ -9,10 +9,12 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.IOException
+
 
 object ApiFactory {
 
@@ -29,9 +31,16 @@ object ApiFactory {
         chain.proceed(newRequest.build())
     }
 
-    private val httpClient = OkHttpClient().newBuilder()
-        .addInterceptor(authInterceptor)
-        .build()
+    var logging = HttpLoggingInterceptor()
+
+    private val httpClient: OkHttpClient
+        get() {
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+            return OkHttpClient().newBuilder()
+                .addInterceptor(authInterceptor)
+                .addInterceptor(logging)
+                .build()
+        }
 
     val retrofit : Retrofit = Retrofit.Builder()
         .client(httpClient)
