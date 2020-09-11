@@ -1,5 +1,8 @@
 # Khatm Android
 
+- [The Khatm Organization](https://khatm.org/)
+- [The Android Architecture](https://github.com/khatm-org/khatm-android/wiki/Architecture)
+
 ## Environment
 - Ruby 2.5.1p57 - As per `.ruby-version`
 - Bundler version 2.0.2
