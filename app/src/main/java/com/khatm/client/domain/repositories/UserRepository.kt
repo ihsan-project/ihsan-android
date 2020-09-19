@@ -1,11 +1,11 @@
-package com.khatm.client.repositories
+package com.khatm.client.domain.repositories
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.khatm.client.ApiFactory
-import com.khatm.client.models.UserModel
+import com.khatm.client.domain.models.UserModel
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import org.json.JSONObject

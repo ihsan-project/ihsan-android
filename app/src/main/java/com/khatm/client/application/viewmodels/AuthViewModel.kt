@@ -1,4 +1,4 @@
-package com.khatm.client.viewmodels
+package com.khatm.client.application.viewmodels
 
 import android.content.Intent
 import android.util.Log
@@ -12,10 +12,10 @@ import com.google.android.gms.common.api.ApiException
 import com.khatm.client.ApiFactory
 import com.khatm.client.BuildConfig
 import com.khatm.client.R
-import com.khatm.client.models.SettingsModel
-import com.khatm.client.models.UserModel
-import com.khatm.client.repositories.ContentRepository
-import com.khatm.client.repositories.UserRepository
+import com.khatm.client.domain.models.SettingsModel
+import com.khatm.client.domain.models.UserModel
+import com.khatm.client.domain.repositories.ContentRepository
+import com.khatm.client.domain.repositories.UserRepository
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 

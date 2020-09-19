@@ -1,4 +1,4 @@
-package com.khatm.client.repositories
+package com.khatm.client.domain.repositories
 
 import android.app.Application
 import androidx.lifecycle.LiveData
@@ -7,9 +7,9 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.khatm.client.ApiFactory
 import com.khatm.client.factories.DatabaseFactory
-import com.khatm.client.models.BookModel
-import com.khatm.client.models.Books
-import com.khatm.client.models.SettingsModel
+import com.khatm.client.domain.models.BookModel
+import com.khatm.client.domain.models.Books
+import com.khatm.client.domain.models.SettingsModel
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred

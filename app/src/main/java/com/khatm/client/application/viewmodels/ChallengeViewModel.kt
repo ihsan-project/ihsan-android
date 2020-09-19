@@ -1,11 +1,11 @@
-package com.khatm.client.viewmodels
+package com.khatm.client.application.viewmodels
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import com.khatm.client.models.BookModel
-import com.khatm.client.models.Books
-import com.khatm.client.repositories.ContentRepository
+import com.khatm.client.domain.models.BookModel
+import com.khatm.client.domain.models.Books
+import com.khatm.client.domain.repositories.ContentRepository
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 

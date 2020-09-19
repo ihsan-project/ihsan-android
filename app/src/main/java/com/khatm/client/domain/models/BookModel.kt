@@ -1,4 +1,4 @@
-package com.khatm.client.models
+package com.khatm.client.domain.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -10,7 +10,7 @@ import com.google.android.gms.common.api.ApiException
 import com.khatm.client.ApiFactory
 import com.khatm.client.extensions.dismissLoading
 import com.khatm.client.extensions.displayLoading
-import com.khatm.client.viewmodels.AuthViewModel
+import com.khatm.client.application.viewmodels.AuthViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
