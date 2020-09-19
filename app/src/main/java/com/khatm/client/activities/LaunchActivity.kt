@@ -11,6 +11,11 @@ import com.khatm.client.ApiFactory
 import com.khatm.client.extensions.dismissLoading
 import com.khatm.client.extensions.displayLoading
 import com.khatm.client.application.viewmodels.AuthViewModel
+import com.khatm.client.application.viewmodels.LaunchViewModel
+import com.khatm.client.application.viewmodels.LaunchViewModelFactory
+import com.khatm.client.domain.repositories.SettingsRepository
+import com.khatm.client.repositoryInstances.ProfileRepositoryInstance
+import com.khatm.client.repositoryInstances.SettingsRepositoryInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -18,12 +23,19 @@ import kotlinx.coroutines.launch
 
 class LaunchActivity : AppCompatActivity() {
     private lateinit var authViewModel: AuthViewModel
+    private lateinit var launchViewModel: LaunchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         authViewModel = ViewModelProviders.of(this).get(AuthViewModel::class.java)
         authViewModel.setupFor(this)
+
+        val settingsRepository = SettingsRepositoryInstance(this)
+        val profileRepository = ProfileRepositoryInstance()
+        launchViewModel = ViewModelProviders
+            .of(this, LaunchViewModelFactory(this, settingsRepository, profileRepository))
+            .get(LaunchViewModel::class.java)
     }
 
     override fun onStart() {
@@ -33,10 +45,12 @@ class LaunchActivity : AppCompatActivity() {
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val settings = authViewModel.getSettingsFromServerAsync().await()
+                val settings = launchViewModel.syncSettings().await()
+
+//                val settings = authViewModel.getSettingsFromServerAsync().await()
 
                 settings?.let {
-                    authViewModel.storeSettingsAsync(it).await()
+//                    authViewModel.storeSettingsAsync(it).await()
 
                     Log.d("LaunchActivity", "Load settings success")
                 }
