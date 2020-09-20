@@ -50,7 +50,7 @@ class UserRepository(private val application : Application,
 
     val authorizedUser: LiveData<UserModel?>?
         get() {
-            return dao?.authorizedUser
+            return dao?.profile
         }
 
     fun store(user : UserModel) : Deferred<Boolean> {
@@ -84,7 +84,7 @@ interface UserApi {
 interface UserDao {
 
     @get:Query("SELECT * from user WHERE access IS NOT NULL")
-    val authorizedUser: LiveData<UserModel?>
+    val profile: LiveData<UserModel?>
 
     @Insert
     fun insert(user: UserModel)

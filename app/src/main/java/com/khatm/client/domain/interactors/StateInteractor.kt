@@ -1,7 +1,13 @@
 package com.khatm.client.domain.interactors
 
+import android.content.Intent
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.khatm.client.ApiFactory
+import com.khatm.client.activities.AuthActivity
+import com.khatm.client.activities.HomeActivity
 import com.khatm.client.domain.models.SettingsModel
+import com.khatm.client.domain.models.UserModel
 import com.khatm.client.domain.repositories.ProfileRepository
 import com.khatm.client.domain.repositories.SettingsRepository
 import kotlinx.coroutines.*
@@ -30,16 +36,21 @@ class StateInteractor(val activity: AppCompatActivity, val settingsRepository: S
         return future
     }
 
-    val authState: Boolean
-        get() {
-            return false
+    fun syncUser(scope: CoroutineScope) : Deferred<UserModel?> {
+        val future = CompletableDeferred<UserModel?>()
+
+        scope.launch {
+            val user = profileRepository.profileFromDbAsync.await()
+
+            user?.access?.let {
+                if (it.isNotBlank()) {
+                    ApiFactory.authToken = it
+                }
+            }
+
+            future.complete(user)
         }
 
-    fun authenticate() {
-
-    }
-
-    fun deauthenticate() {
-
+        return future
     }
 }

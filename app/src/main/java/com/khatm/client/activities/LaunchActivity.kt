@@ -32,7 +32,7 @@ class LaunchActivity : AppCompatActivity() {
         authViewModel.setupFor(this)
 
         val settingsRepository = SettingsRepositoryInstance(this)
-        val profileRepository = ProfileRepositoryInstance()
+        val profileRepository = ProfileRepositoryInstance(this)
         launchViewModel = ViewModelProviders
             .of(this, LaunchViewModelFactory(this, settingsRepository, profileRepository))
             .get(LaunchViewModel::class.java)
@@ -47,11 +47,7 @@ class LaunchActivity : AppCompatActivity() {
             try {
                 val settings = launchViewModel.syncSettings().await()
 
-//                val settings = authViewModel.getSettingsFromServerAsync().await()
-
                 settings?.let {
-//                    authViewModel.storeSettingsAsync(it).await()
-
                     Log.d("LaunchActivity", "Load settings success")
                 }
             }
@@ -60,14 +56,13 @@ class LaunchActivity : AppCompatActivity() {
                 Toast.makeText(this@LaunchActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
             }
 
-            val user = authViewModel.authorizedUserAsync.await()
             var intent = Intent(this@LaunchActivity, AuthActivity::class.java)
-            
+
+            val user = launchViewModel.syncProfile().await()
             user?.access?.let {
                 if (it.isNotBlank()) {
                     Log.d("LaunchActivity", "Already Logged in")
                     intent = Intent(this@LaunchActivity, HomeActivity::class.java)
-                    ApiFactory.authToken = it
                 }
             }
 
