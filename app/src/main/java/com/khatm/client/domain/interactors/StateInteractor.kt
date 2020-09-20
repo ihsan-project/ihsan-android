@@ -70,7 +70,7 @@ class StateInteractor(val activity: AppCompatActivity, val settingsRepository: S
             )
 
             authenticatedProfile?.let {
-                profileRepository.storeToDbAsync(it)
+                profileRepository.storeToDbAsync(it).await()
 
                 it.access?.let {
                     if (it.isNotBlank()) {
@@ -80,6 +80,23 @@ class StateInteractor(val activity: AppCompatActivity, val settingsRepository: S
             }
 
             future.complete(authenticatedProfile)
+        }
+
+        return future
+    }
+
+    fun unsyncAuthentication(scope: CoroutineScope) : Deferred<Boolean> {
+        val future = CompletableDeferred<Boolean>()
+
+        scope.launch {
+            val user = profileRepository.profileFromDbAsync.await()
+
+            user?.let {
+                profileRepository.deleteFromDbAsync(it).await()
+                ApiFactory.authToken = null
+            }
+
+            future.complete(true)
         }
 
         return future

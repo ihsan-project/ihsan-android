@@ -92,6 +92,7 @@ class HomeActivity : BaseActivity() {
 
 
     private fun signOut() {
+        // TODO: Need to move this to a better place
         val settingsRepository = SettingsRepositoryInstance(this)
         val profileRepository = ProfileRepositoryInstance(this)
         val authViewModel = ViewModelProviders
@@ -99,7 +100,7 @@ class HomeActivity : BaseActivity() {
             .get(AuthViewModel::class.java)
 
         GlobalScope.launch(Dispatchers.Main) {
-            authViewModel.logoutAsync().await()
+            authViewModel.deauthorizeAsync().await()
 
             Toast.makeText(this@HomeActivity, "Successfully signed out", Toast.LENGTH_SHORT).show()
 

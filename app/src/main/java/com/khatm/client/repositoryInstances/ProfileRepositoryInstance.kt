@@ -67,4 +67,18 @@ class ProfileRepositoryInstance(private val activity: AppCompatActivity) : Profi
 
         return future
     }
+
+    override fun deleteFromDbAsync(profile: UserModel): Deferred<Boolean> {
+        val future = CompletableDeferred<Boolean>()
+
+        // Dispatch to main thread: https://stackoverflow.com/a/54090499
+        GlobalScope.launch(Dispatchers.Main) {
+            // TODO: Need to delete only the specified user
+            userDao?.deleteAll()
+
+            future.complete(true)
+        }
+
+        return future
+    }
 }

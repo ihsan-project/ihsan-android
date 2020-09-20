@@ -83,6 +83,12 @@ class AuthViewModel(val activity: AppCompatActivity,
         return stateInteractor.syncAuthentication(scope, googleAccount)
     }
 
+    fun deauthorizeAsync() : Deferred<Boolean> {
+        mGoogleSignInClient.signOut()
+
+        return stateInteractor.unsyncAuthentication(scope)
+    }
+
     val authorizedUserAsync : Deferred<UserModel?>
         get() {
             val future = CompletableDeferred<UserModel?>()
@@ -98,13 +104,6 @@ class AuthViewModel(val activity: AppCompatActivity,
 
     fun storeAuthorizedUserAsync(user: UserModel) : Deferred<Boolean> {
         return userRepository.store(user)
-    }
-
-    fun logoutAsync() : Deferred<Boolean> {
-        mGoogleSignInClient.signOut()
-
-        return userRepository.clear()
-        ApiFactory.authToken = null
     }
 
     fun getSettingsFromServerAsync() : Deferred<SettingsModel?> {
