@@ -23,7 +23,7 @@ class ProfileRepositoryInstance(private val activity: AppCompatActivity) : Profi
         userDao = db?.userDao()
     }
 
-    override suspend fun profileFromServer(uuid: String?, email: String?, firstName: String?, idToken: String?, platform: Int?) : UserModel? {
+    override suspend fun authorizeWithServer(uuid: String?, email: String?, firstName: String?, idToken: String?, platform: Int?) : UserModel? {
         // TODO: Create a serializer in UserModel model class to help with this
         val json = JSONObject()
         json.put("email", email)
@@ -54,4 +54,17 @@ class ProfileRepositoryInstance(private val activity: AppCompatActivity) : Profi
 
             return future
         }
+
+    override fun storeToDbAsync(profile : UserModel) : Deferred<Boolean> {
+        val future = CompletableDeferred<Boolean>()
+
+        // Dispatch to main thread: https://stackoverflow.com/a/54090499
+        GlobalScope.launch(Dispatchers.Main) {
+            userDao?.insert(profile)
+
+            future.complete(true)
+        }
+
+        return future
+    }
 }

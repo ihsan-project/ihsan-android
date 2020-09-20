@@ -7,13 +7,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.api.ApiException
-import com.khatm.client.ApiFactory
 import com.khatm.client.extensions.dismissLoading
 import com.khatm.client.extensions.displayLoading
 import com.khatm.client.application.viewmodels.AuthViewModel
 import com.khatm.client.application.viewmodels.LaunchViewModel
 import com.khatm.client.application.viewmodels.LaunchViewModelFactory
-import com.khatm.client.domain.repositories.SettingsRepository
 import com.khatm.client.repositoryInstances.ProfileRepositoryInstance
 import com.khatm.client.repositoryInstances.SettingsRepositoryInstance
 import kotlinx.coroutines.Dispatchers
@@ -22,14 +20,10 @@ import kotlinx.coroutines.launch
 
 
 class LaunchActivity : AppCompatActivity() {
-    private lateinit var authViewModel: AuthViewModel
     private lateinit var launchViewModel: LaunchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        authViewModel = ViewModelProviders.of(this).get(AuthViewModel::class.java)
-        authViewModel.setupFor(this)
 
         val settingsRepository = SettingsRepositoryInstance(this)
         val profileRepository = ProfileRepositoryInstance(this)

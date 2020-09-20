@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -12,15 +13,29 @@ import com.google.android.gms.common.api.ApiException
 import com.khatm.client.ApiFactory
 import com.khatm.client.BuildConfig
 import com.khatm.client.R
+import com.khatm.client.domain.interactors.StateInteractor
 import com.khatm.client.domain.models.SettingsModel
 import com.khatm.client.domain.models.UserModel
 import com.khatm.client.domain.repositories.ContentRepository
+import com.khatm.client.domain.repositories.ProfileRepository
+import com.khatm.client.domain.repositories.SettingsRepository
 import com.khatm.client.domain.repositories.UserRepository
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
+class AuthViewModelFactory(
+    val activity: AppCompatActivity,
+    val settingsRepository: SettingsRepository,
+    val profileRepository: ProfileRepository
+): ViewModelProvider.NewInstanceFactory() {
+    override fun <T: ViewModel> create(modelClass:Class<T>): T {
+        return AuthViewModelFactory(activity, settingsRepository, profileRepository) as T
+    }
+}
 
-class AuthViewModel() : ViewModel() {
+class AuthViewModel(val activity: AppCompatActivity,
+                    val settingsRepository: SettingsRepository,
+                    val profileRepository: ProfileRepository) : ViewModel() {
 
     // TODO: These are probably going to be required in every VM
     //       Is it possilbe to create a Parent class VM that all VMs inherit from?
@@ -28,11 +43,24 @@ class AuthViewModel() : ViewModel() {
     private val parentJob = Job()
     private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Default
     private val scope = CoroutineScope(coroutineContext)
-    private lateinit var activity: AppCompatActivity
+
+    val stateInteractor = StateInteractor(activity = activity, profileRepository = profileRepository, settingsRepository = settingsRepository)
 
     private lateinit var userRepository : UserRepository
     private lateinit var contentRepository: ContentRepository
     private lateinit var mGoogleSignInClient: GoogleSignInClient
+
+    init {
+        val gso: GoogleSignInOptions = GoogleSignInOptions
+            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(activity.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+
+        mGoogleSignInClient = GoogleSignIn.getClient(activity, gso)
+        userRepository = UserRepository(activity.application, scope)
+        contentRepository = ContentRepository(activity.application, scope)
+    }
 
     val signInIntent: Intent
         get() {
@@ -47,39 +75,12 @@ class AuthViewModel() : ViewModel() {
             return "v.${versionName} code ${versionCode}"
         }
 
-    fun setupFor(authActivity: AppCompatActivity) {
-        val gso: GoogleSignInOptions = GoogleSignInOptions
-            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(authActivity.getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-
-        mGoogleSignInClient = GoogleSignIn.getClient(authActivity, gso)
-        activity = authActivity
-        userRepository = UserRepository(activity.application, scope)
-        contentRepository = ContentRepository(activity.application, scope)
-    }
-
     fun authorizeWithServerAsync(googleAuthData: Intent) : Deferred<UserModel?> {
         val future = CompletableDeferred<UserModel?>()
         val googleAccount = GoogleSignIn.getSignedInAccountFromIntent(googleAuthData).getResult(
             ApiException::class.java)
 
-        scope.launch {
-            val settings = currentSettingsAsync.await()
-
-            Log.d("AuthViewModel", "Google SSO Success")
-            val auth = userRepository.getAuthorizationFromServer(
-                googleAccount?.id,
-                googleAccount?.email,
-                googleAccount?.displayName,
-                googleAccount?.idToken,
-                settings?.constants?.platforms?.get("google")
-            )
-            future.complete(auth)
-        }
-
-        return future
+        return stateInteractor.syncAuthentication(scope, googleAccount)
     }
 
     val authorizedUserAsync : Deferred<UserModel?>
