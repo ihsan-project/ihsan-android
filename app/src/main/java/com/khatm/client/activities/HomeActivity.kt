@@ -11,17 +11,19 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.khatm.client.R
+import com.khatm.client.application.viewmodels.*
 import com.khatm.client.extensions.BaseActivity
 import com.khatm.client.extensions.dismissLoading
 import com.khatm.client.extensions.displayLoading
-import com.khatm.client.viewmodels.AuthViewModel
-import com.khatm.client.viewmodels.ChallengeViewModel
+import com.khatm.client.repositoryInstances.BooksRepositoryInstance
+import com.khatm.client.repositoryInstances.ProfileRepositoryInstance
+import com.khatm.client.repositoryInstances.SettingsRepositoryInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class HomeActivity : BaseActivity() {
-    private lateinit var challengeViewModel: ChallengeViewModel
+    private lateinit var homeViewModel: HomeViewModel
 
     lateinit var signOutButton: Button
     lateinit var textViewName : TextView
@@ -33,8 +35,10 @@ class HomeActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        challengeViewModel = ViewModelProviders.of(this).get(ChallengeViewModel::class.java)
-        challengeViewModel.setupFor(this)
+        val booksRepository = BooksRepositoryInstance(this)
+        homeViewModel = ViewModelProviders
+            .of(this, HomeViewModelFactory(this, booksRepository))
+            .get(HomeViewModel::class.java)
 
         textViewName = findViewById(R.id.TextViewName)
         textViewEmail = findViewById(R.id.textViewEmail)
@@ -67,12 +71,10 @@ class HomeActivity : BaseActivity() {
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val settings = challengeViewModel.getBooksFromServerAsync().await()
+                val books = homeViewModel.syncBooksAsync().await()
 
-                settings?.let {
-                    challengeViewModel.storeBooksAsync(it.books).await()
-
-                    Log.d("HomeActivity", "Load settings success")
+                books?.let {
+                    Log.d("HomeActivity", "Load books success")
                 }
             }
             catch (e: ApiException) {
@@ -80,18 +82,21 @@ class HomeActivity : BaseActivity() {
                 Toast.makeText(this@HomeActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
             }
 
-
             dismissLoading()
         }
     }
 
 
     private fun signOut() {
-        val authViewModel = ViewModelProviders.of(this).get(AuthViewModel::class.java)
-        authViewModel.setupFor(this)
+        // TODO: Need to move this to a better place
+        val settingsRepository = SettingsRepositoryInstance(this)
+        val profileRepository = ProfileRepositoryInstance(this)
+        val authViewModel = ViewModelProviders
+            .of(this, AuthViewModelFactory(this, settingsRepository, profileRepository))
+            .get(AuthViewModel::class.java)
 
         GlobalScope.launch(Dispatchers.Main) {
-            authViewModel.logoutAsync().await()
+            authViewModel.deauthorizeAsync().await()
 
             Toast.makeText(this@HomeActivity, "Successfully signed out", Toast.LENGTH_SHORT).show()
 

@@ -2,10 +2,10 @@ package com.khatm.client.factories
 
 import android.content.Context
 import androidx.room.*
-import com.khatm.client.models.*
-import com.khatm.client.repositories.BooksDao
-import com.khatm.client.repositories.SettingsDao
-import com.khatm.client.repositories.UserDao
+import com.khatm.client.domain.models.*
+import com.khatm.client.repositoryInstances.BooksDao
+import com.khatm.client.repositoryInstances.SettingsDao
+import com.khatm.client.repositoryInstances.UserDao
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 

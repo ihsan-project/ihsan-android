@@ -8,12 +8,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.api.ApiException
-import com.khatm.client.ApiFactory
 import com.khatm.client.R
 import com.khatm.client.extensions.BaseActivity
 import com.khatm.client.extensions.dismissLoading
 import com.khatm.client.extensions.displayLoading
-import com.khatm.client.viewmodels.AuthViewModel
+import com.khatm.client.application.viewmodels.AuthViewModel
+import com.khatm.client.application.viewmodels.AuthViewModelFactory
+import com.khatm.client.repositoryInstances.ProfileRepositoryInstance
+import com.khatm.client.repositoryInstances.SettingsRepositoryInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -25,8 +27,11 @@ class AuthActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        authViewModel = ViewModelProviders.of(this).get(AuthViewModel::class.java)
-        authViewModel.setupFor(this)
+        val settingsRepository = SettingsRepositoryInstance(this)
+        val profileRepository = ProfileRepositoryInstance(this)
+        authViewModel = ViewModelProviders
+            .of(this, AuthViewModelFactory(this, settingsRepository, profileRepository))
+            .get(AuthViewModel::class.java)
 
         setContentView(R.layout.activity_auth)
 
@@ -50,9 +55,6 @@ class AuthActivity : BaseActivity() {
                     val user = authViewModel.authorizeWithServerAsync(it).await()
 
                     if (user?.access != null) {
-                        ApiFactory.authToken = user?.access
-                        authViewModel.storeAuthorizedUserAsync(user).await()
-
                         Log.d("AuthActivity", "Login successful")
 
                         val intent = Intent(this@AuthActivity, HomeActivity::class.java)
