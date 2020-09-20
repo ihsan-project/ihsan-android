@@ -1,7 +1,6 @@
 package com.khatm.client.domain.interactors
 
 import androidx.appcompat.app.AppCompatActivity
-import com.khatm.client.domain.models.BookModel
 import com.khatm.client.domain.models.Books
 import com.khatm.client.domain.repositories.BooksRepository
 import kotlinx.coroutines.CompletableDeferred

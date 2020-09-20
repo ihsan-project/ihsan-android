@@ -1,12 +1,8 @@
 package com.khatm.client.domain.interactors
 
-import android.content.Intent
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.khatm.client.ApiFactory
-import com.khatm.client.activities.AuthActivity
-import com.khatm.client.activities.HomeActivity
 import com.khatm.client.domain.models.SettingsModel
 import com.khatm.client.domain.models.UserModel
 import com.khatm.client.domain.repositories.ProfileRepository

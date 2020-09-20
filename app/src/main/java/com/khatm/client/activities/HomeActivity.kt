@@ -24,7 +24,6 @@ import kotlinx.coroutines.launch
 
 class HomeActivity : BaseActivity() {
     private lateinit var homeViewModel: HomeViewModel
-    private lateinit var challengeViewModel: ChallengeViewModel
 
     lateinit var signOutButton: Button
     lateinit var textViewName : TextView
@@ -40,9 +39,6 @@ class HomeActivity : BaseActivity() {
         homeViewModel = ViewModelProviders
             .of(this, HomeViewModelFactory(this, booksRepository))
             .get(HomeViewModel::class.java)
-
-        challengeViewModel = ViewModelProviders.of(this).get(ChallengeViewModel::class.java)
-        challengeViewModel.setupFor(this)
 
         textViewName = findViewById(R.id.TextViewName)
         textViewEmail = findViewById(R.id.textViewEmail)

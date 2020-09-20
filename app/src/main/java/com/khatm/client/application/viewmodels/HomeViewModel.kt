@@ -4,12 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.khatm.client.domain.interactors.ContentInteractor
-import com.khatm.client.domain.interactors.StateInteractor
-import com.khatm.client.domain.models.BookModel
 import com.khatm.client.domain.models.Books
 import com.khatm.client.domain.repositories.BooksRepository
-import com.khatm.client.domain.repositories.ProfileRepository
-import com.khatm.client.domain.repositories.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers

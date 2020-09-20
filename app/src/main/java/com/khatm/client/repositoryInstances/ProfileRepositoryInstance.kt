@@ -1,18 +1,22 @@
 package com.khatm.client.repositoryInstances
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
 import com.khatm.client.ApiFactory
-import com.khatm.client.domain.models.SettingsModel
 import com.khatm.client.domain.models.UserModel
 import com.khatm.client.domain.repositories.ProfileRepository
-import com.khatm.client.domain.repositories.UserApi
-import com.khatm.client.domain.repositories.UserDao
 import com.khatm.client.factories.DatabaseFactory
 import kotlinx.coroutines.*
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import org.json.JSONObject
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.POST
 
 class ProfileRepositoryInstance(private val activity: AppCompatActivity) : ProfileRepository {
     private val userDao: UserDao?
@@ -81,4 +85,22 @@ class ProfileRepositoryInstance(private val activity: AppCompatActivity) : Profi
 
         return future
     }
+}
+
+interface UserApi {
+    @POST("authorizations")
+    fun getAuthorizationAsync(@Body request: RequestBody) : Deferred<Response<UserModel>>
+}
+
+@Dao
+interface UserDao {
+
+    @get:Query("SELECT * from user WHERE access IS NOT NULL")
+    val profile: LiveData<UserModel?>
+
+    @Insert
+    fun insert(user: UserModel)
+
+    @Query("DELETE FROM user")
+    fun deleteAll()
 }

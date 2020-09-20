@@ -1,18 +1,19 @@
 package com.khatm.client.repositoryInstances
 
-import android.app.Activity
-import android.app.Application
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
 import com.khatm.client.ApiFactory
 import com.khatm.client.domain.models.SettingsModel
-import com.khatm.client.domain.repositories.SettingsApi
-import com.khatm.client.domain.repositories.SettingsDao
 import com.khatm.client.domain.repositories.SettingsRepository
 import com.khatm.client.factories.DatabaseFactory
 import kotlinx.coroutines.*
+import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Path
 
 class SettingsRepositoryInstance(private val activity: AppCompatActivity) : SettingsRepository {
     private val settingsDao: SettingsDao?
@@ -58,4 +59,20 @@ class SettingsRepositoryInstance(private val activity: AppCompatActivity) : Sett
 
         return response;
     }
+}
+
+interface SettingsApi {
+
+    @GET("settings/{version}")
+    fun getSettingsAsync(@Path("version") version: Int) : Deferred<Response<SettingsModel>>
+}
+
+@Dao
+interface SettingsDao {
+
+    @get:Query("SELECT * from settings ORDER BY version DESC")
+    val settings: LiveData<SettingsModel?>
+
+    @Insert
+    fun insert(user: SettingsModel)
 }

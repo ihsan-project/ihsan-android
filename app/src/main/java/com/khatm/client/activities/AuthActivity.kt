@@ -8,15 +8,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.api.ApiException
-import com.khatm.client.ApiFactory
 import com.khatm.client.R
 import com.khatm.client.extensions.BaseActivity
 import com.khatm.client.extensions.dismissLoading
 import com.khatm.client.extensions.displayLoading
 import com.khatm.client.application.viewmodels.AuthViewModel
 import com.khatm.client.application.viewmodels.AuthViewModelFactory
-import com.khatm.client.application.viewmodels.LaunchViewModel
-import com.khatm.client.application.viewmodels.LaunchViewModelFactory
 import com.khatm.client.repositoryInstances.ProfileRepositoryInstance
 import com.khatm.client.repositoryInstances.SettingsRepositoryInstance
 import kotlinx.coroutines.Dispatchers
