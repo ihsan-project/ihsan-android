@@ -24,7 +24,7 @@ class StateInteractor(val activity: AppCompatActivity, val settingsRepository: S
             }
 
             settings?.let {
-                settingsRepository.storeToDbAsync(it).await()
+                settingsRepository.storeToDb(it)
             }
 
             future.complete(settings)
@@ -66,7 +66,7 @@ class StateInteractor(val activity: AppCompatActivity, val settingsRepository: S
             )
 
             authenticatedProfile?.let {
-                profileRepository.storeToDbAsync(it).await()
+                profileRepository.storeToDb(it)
 
                 if (it.access.isNotBlank()) {
                     ApiFactory.authToken = it.access
@@ -86,7 +86,7 @@ class StateInteractor(val activity: AppCompatActivity, val settingsRepository: S
             val user = profileRepository.profileFromDbAsync.await()
 
             user?.let {
-                profileRepository.deleteFromDbAsync(it).await()
+                profileRepository.deleteFromDb(it)
                 ApiFactory.authToken = null
             }
 

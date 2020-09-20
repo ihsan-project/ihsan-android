@@ -33,7 +33,7 @@ class LaunchViewModel(val activity: AppCompatActivity,
 
     val stateInteractor = StateInteractor(activity = activity, profileRepository = profileRepository, settingsRepository = settingsRepository)
 
-    fun syncSettings() : Deferred<SettingsModel?> {
+    fun syncSettingsAsync() : Deferred<SettingsModel?> {
         return stateInteractor.syncSettings(scope)
     }
 

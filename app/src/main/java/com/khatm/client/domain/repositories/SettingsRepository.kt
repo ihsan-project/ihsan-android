@@ -5,6 +5,6 @@ import kotlinx.coroutines.Deferred
 
 interface SettingsRepository {
     val settingsFromDbAsync : Deferred<SettingsModel?>
-    fun storeToDbAsync(settings : SettingsModel) : Deferred<Boolean>
+    fun storeToDb(settings : SettingsModel)
     suspend fun settingsFromServer(currentVersion: Int) : SettingsModel?
 }

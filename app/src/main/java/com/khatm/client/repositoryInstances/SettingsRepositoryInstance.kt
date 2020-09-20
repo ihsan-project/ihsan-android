@@ -38,17 +38,8 @@ class SettingsRepositoryInstance(private val activity: AppCompatActivity) : Sett
             return future
         }
 
-    override fun storeToDbAsync(settings : SettingsModel) : Deferred<Boolean> {
-        val future = CompletableDeferred<Boolean>()
-
-        // Dispatch to main thread: https://stackoverflow.com/a/54090499
-        GlobalScope.launch(Dispatchers.Main) {
-            settingsDao?.insert(settings)
-
-            future.complete(true)
-        }
-
-        return future
+    override fun storeToDb(settings : SettingsModel) {
+        settingsDao?.insert(settings)
     }
 
     override suspend fun settingsFromServer(currentVersion: Int) : SettingsModel? {

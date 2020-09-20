@@ -6,5 +6,6 @@ import kotlinx.coroutines.Deferred
 
 interface BooksRepository {
     suspend fun booksFromServer() : Books?
-    fun storeToDbAsync(books : List<BookModel>) : Deferred<Boolean>
+    val booksFromDbAsync : Deferred<List<BookModel>?>
+    fun storeToDb(books : List<BookModel>)
 }

@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.api.ApiException
 import com.khatm.client.extensions.dismissLoading
 import com.khatm.client.extensions.displayLoading
-import com.khatm.client.application.viewmodels.AuthViewModel
 import com.khatm.client.application.viewmodels.LaunchViewModel
 import com.khatm.client.application.viewmodels.LaunchViewModelFactory
 import com.khatm.client.repositoryInstances.ProfileRepositoryInstance
@@ -39,7 +38,7 @@ class LaunchActivity : AppCompatActivity() {
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val settings = launchViewModel.syncSettings().await()
+                val settings = launchViewModel.syncSettingsAsync().await()
 
                 settings?.let {
                     Log.d("LaunchActivity", "Load settings success")

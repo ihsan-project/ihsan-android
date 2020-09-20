@@ -1,7 +1,7 @@
 package com.khatm.client.domain.interactors
 
 import androidx.appcompat.app.AppCompatActivity
-import com.khatm.client.domain.models.Books
+import com.khatm.client.domain.models.BookModel
 import com.khatm.client.domain.repositories.BooksRepository
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -10,14 +10,18 @@ import kotlinx.coroutines.launch
 
 class ContentInteractor(val activity: AppCompatActivity, val booksRepository: BooksRepository) {
 
-    fun syncBooks(scope: CoroutineScope) : Deferred<Books?> {
-        val future = CompletableDeferred<Books?>()
+    fun syncBooks(scope: CoroutineScope) : Deferred<List<BookModel>?> {
+        val future = CompletableDeferred<List<BookModel>?>()
 
         scope.launch {
-            val books = booksRepository.booksFromServer()
+            var books = booksRepository.booksFromDbAsync.await()
 
-            books?.let {
-                booksRepository.storeToDbAsync(books = it.books)
+            if (books == null) {
+                val books = booksRepository.booksFromServer()
+
+                books?.let {
+                    booksRepository.storeToDb(books = it.books)
+                }
             }
 
             future.complete(books)

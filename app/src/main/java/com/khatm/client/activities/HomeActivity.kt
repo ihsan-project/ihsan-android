@@ -74,7 +74,7 @@ class HomeActivity : BaseActivity() {
                 val books = homeViewModel.syncBooksAsync().await()
 
                 books?.let {
-                    Log.d("HomeActivity", "Load settings success")
+                    Log.d("HomeActivity", "Load books success")
                 }
             }
             catch (e: ApiException) {

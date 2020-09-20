@@ -2,6 +2,7 @@ package com.khatm.client.repositoryInstances
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -32,17 +33,22 @@ class BooksRepositoryInstance(private val activity: AppCompatActivity) : BooksRe
         return response;
     }
 
-    override fun storeToDbAsync(books : List<BookModel>) : Deferred<Boolean> {
-        val future = CompletableDeferred<Boolean>()
+    override val booksFromDbAsync : Deferred<List<BookModel>?>
+        get() {
+            val future = CompletableDeferred<List<BookModel>?>()
 
-        // Dispatch to main thread: https://stackoverflow.com/a/54090499
-        GlobalScope.launch(Dispatchers.Main) {
-            booksDao?.insert(books)
+            // Dispatch to main thread: https://stackoverflow.com/a/54090499
+            GlobalScope.launch(Dispatchers.Main) {
+                booksDao?.books?.observe(activity, Observer {
+                    future.complete(it)
+                })
+            }
 
-            future.complete(true)
+            return future
         }
 
-        return future
+    override fun storeToDb(books : List<BookModel>) {
+        booksDao?.insert(books)
     }
 }
 
