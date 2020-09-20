@@ -15,10 +15,13 @@ class LaunchViewModelFactory(
     val activity: AppCompatActivity,
     val settingsRepository: SettingsRepository,
     val profileRepository: ProfileRepository
-): ViewModelProvider.NewInstanceFactory() {
-    override fun <T: ViewModel> create(modelClass:Class<T>): T {
-        return LaunchViewModelFactory(activity, settingsRepository, profileRepository) as T
-    }
+): ViewModelProvider.Factory {
+    override fun <T: ViewModel> create(modelClass:Class<T>): T =
+        modelClass.getConstructor(
+            AppCompatActivity::class.java,
+            SettingsRepository::class.java,
+            ProfileRepository::class.java
+        ).newInstance(activity, settingsRepository, profileRepository)
 }
 
 class LaunchViewModel(val activity: AppCompatActivity,

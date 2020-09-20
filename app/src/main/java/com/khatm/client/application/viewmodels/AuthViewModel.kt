@@ -21,10 +21,13 @@ class AuthViewModelFactory(
     val activity: AppCompatActivity,
     val settingsRepository: SettingsRepository,
     val profileRepository: ProfileRepository
-): ViewModelProvider.NewInstanceFactory() {
-    override fun <T: ViewModel> create(modelClass:Class<T>): T {
-        return AuthViewModelFactory(activity, settingsRepository, profileRepository) as T
-    }
+): ViewModelProvider.Factory {
+    override fun <T: ViewModel> create(modelClass:Class<T>): T =
+        modelClass.getConstructor(
+            AppCompatActivity::class.java,
+            SettingsRepository::class.java,
+            ProfileRepository::class.java
+        ).newInstance(activity, settingsRepository, profileRepository)
 }
 
 class AuthViewModel(val activity: AppCompatActivity,
@@ -40,7 +43,7 @@ class AuthViewModel(val activity: AppCompatActivity,
 
     val stateInteractor = StateInteractor(activity = activity, profileRepository = profileRepository, settingsRepository = settingsRepository)
 
-    private lateinit var mGoogleSignInClient: GoogleSignInClient
+    private var mGoogleSignInClient: GoogleSignInClient
 
     init {
         val gso: GoogleSignInOptions = GoogleSignInOptions

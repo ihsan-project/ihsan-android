@@ -15,10 +15,12 @@ import kotlin.coroutines.CoroutineContext
 class HomeViewModelFactory(
     val activity: AppCompatActivity,
     val booksRepository: BooksRepository
-): ViewModelProvider.NewInstanceFactory() {
-    override fun <T: ViewModel> create(modelClass:Class<T>): T {
-        return HomeViewModelFactory(activity, booksRepository) as T
-    }
+): ViewModelProvider.Factory {
+    override fun <T: ViewModel> create(modelClass:Class<T>): T =
+        modelClass.getConstructor(
+            AppCompatActivity::class.java,
+            BooksRepository::class.java
+        ).newInstance(activity, booksRepository)
 }
 
 class HomeViewModel(val activity: AppCompatActivity,

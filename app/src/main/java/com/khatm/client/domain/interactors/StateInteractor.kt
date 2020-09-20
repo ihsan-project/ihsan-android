@@ -68,10 +68,8 @@ class StateInteractor(val activity: AppCompatActivity, val settingsRepository: S
             authenticatedProfile?.let {
                 profileRepository.storeToDbAsync(it).await()
 
-                it.access?.let {
-                    if (it.isNotBlank()) {
-                        ApiFactory.authToken = it
-                    }
+                if (it.access.isNotBlank()) {
+                    ApiFactory.authToken = it.access
                 }
             }
 
