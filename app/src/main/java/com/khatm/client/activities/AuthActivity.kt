@@ -11,6 +11,7 @@ import com.google.android.gms.common.api.ApiException
 import com.khatm.client.R
 import com.khatm.client.application.viewmodels.AuthViewModel
 import com.khatm.client.application.viewmodels.AuthViewModelFactory
+import com.khatm.client.proxyInstances.GoogleSSOProxyInstance
 import com.khatm.client.repositoryInstances.ProfileRepositoryInstance
 import com.khatm.client.repositoryInstances.SettingsRepositoryInstance
 import kotlinx.coroutines.Dispatchers
@@ -26,8 +27,13 @@ class AuthActivity : ActivityBase() {
 
         val settingsRepository = SettingsRepositoryInstance(this)
         val profileRepository = ProfileRepositoryInstance(this)
+        val googleSSOProxy = GoogleSSOProxyInstance(this)
+        googleSSOProxy.signinIntent = {
+            launchIntentAsync(it).await()?.data
+        }
+
         authViewModel = ViewModelProviders
-            .of(this, AuthViewModelFactory(this, settingsRepository, profileRepository))
+            .of(this, AuthViewModelFactory(this, settingsRepository, profileRepository, googleSSOProxy))
             .get(AuthViewModel::class.java)
 
         setContentView(R.layout.activity_auth)
@@ -45,30 +51,26 @@ class AuthActivity : ActivityBase() {
         displayLoading()
 
         GlobalScope.launch(Dispatchers.Main) {
-            val result = launchIntentAsync(authViewModel.signInIntent).await()
+            try {
+                val user = authViewModel.authorize()
 
-            result?.data?.let {
-                try {
-                    val user = authViewModel.authorizeWithServerAsync(it).await()
+                if (user?.access != null) {
+                    Log.d("AuthActivity", "Login successful")
 
-                    if (user?.access != null) {
-                        Log.d("AuthActivity", "Login successful")
-
-                        val intent = Intent(this@AuthActivity, HomeActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    } else {
-                        Log.d("AuthActivity", "Failed: server responded without access token")
-                        Toast.makeText(this@AuthActivity, "Failed to authorize. Please try again.", Toast.LENGTH_SHORT).show()
-                    }
-
-                    dismissLoading()
+                    val intent = Intent(this@AuthActivity, HomeActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Log.d("AuthActivity", "Failed: server responded without access token")
+                    Toast.makeText(this@AuthActivity, "Failed to authorize. Please try again.", Toast.LENGTH_SHORT).show()
                 }
-                catch (e: ApiException) {
-                    Log.d("AuthActivity", "Failed Auth: $e")
-                    Toast.makeText(this@AuthActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
-                    dismissLoading()
-                }
+
+                dismissLoading()
+            }
+            catch (e: ApiException) {
+                Log.d("AuthActivity", "Failed Auth: $e")
+                Toast.makeText(this@AuthActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
+                dismissLoading()
             }
         }
     }

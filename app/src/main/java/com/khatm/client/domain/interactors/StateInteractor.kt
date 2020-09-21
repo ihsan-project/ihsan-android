@@ -1,10 +1,10 @@
 package com.khatm.client.domain.interactors
 
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.khatm.client.ApiFactory
 import com.khatm.client.domain.models.SettingsModel
 import com.khatm.client.domain.models.UserModel
+import com.khatm.client.domain.repositories.SSOAccount
 import com.khatm.client.domain.repositories.ProfileRepository
 import com.khatm.client.domain.repositories.SettingsRepository
 import kotlinx.coroutines.*
@@ -54,17 +54,17 @@ class StateInteractor(private val activity: AppCompatActivity,
         return future
     }
 
-    fun syncAuthentication(googleAccount: GoogleSignInAccount?) : Deferred<UserModel?> {
+    fun syncAuthentication(account: SSOAccount) : Deferred<UserModel?> {
         val future = CompletableDeferred<UserModel?>()
 
         scope.launch {
             val settings = settingsRepository.settingsFromDbAsync.await()
 
             val authenticatedProfile = profileRepository.authorizeWithServer(
-                googleAccount?.id,
-                googleAccount?.email,
-                googleAccount?.displayName,
-                googleAccount?.idToken,
+                account.id,
+                account.email,
+                account.displayName,
+                account.idToken,
                 settings?.constants?.platforms?.get("google")
             )
 

@@ -9,3 +9,10 @@ interface ProfileRepository {
     fun storeToDb(profile : UserModel)
     fun deleteFromDb(profile: UserModel)
 }
+
+class SSOAccount(
+    val id: String?,
+    val email: String?,
+    val displayName: String?,
+    val idToken: String?
+)
