@@ -15,7 +15,7 @@ import com.khatm.client.domain.models.UserModel
 import com.khatm.client.domain.repositories.ProfileRepository
 import com.khatm.client.domain.repositories.SettingsRepository
 import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
+
 
 class AuthViewModelFactory(
     val activity: AppCompatActivity,
@@ -32,17 +32,9 @@ class AuthViewModelFactory(
 
 class AuthViewModel(val activity: AppCompatActivity,
                     val settingsRepository: SettingsRepository,
-                    val profileRepository: ProfileRepository) : ViewModel() {
+                    val profileRepository: ProfileRepository) : ViewModelBase() {
 
-    // TODO: These are probably going to be required in every VM
-    //       Is it possilbe to create a Parent class VM that all VMs inherit from?
-    //       Or extend VMs so they all include these common properties?
-    private val parentJob = Job()
-    private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Default
-    private val scope = CoroutineScope(coroutineContext)
-
-    val stateInteractor = StateInteractor(activity = activity, profileRepository = profileRepository, settingsRepository = settingsRepository)
-
+    private val stateInteractor = StateInteractor(activity = activity, profileRepository = profileRepository, settingsRepository = settingsRepository)
     private var mGoogleSignInClient: GoogleSignInClient
 
     init {
@@ -80,6 +72,4 @@ class AuthViewModel(val activity: AppCompatActivity,
 
         return stateInteractor.unsyncAuthentication(scope)
     }
-
-    fun cancelAllRequests() = coroutineContext.cancel()
 }

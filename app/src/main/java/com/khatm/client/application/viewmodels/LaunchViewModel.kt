@@ -9,7 +9,6 @@ import com.khatm.client.domain.models.UserModel
 import com.khatm.client.domain.repositories.ProfileRepository
 import com.khatm.client.domain.repositories.SettingsRepository
 import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
 
 class LaunchViewModelFactory(
     val activity: AppCompatActivity,
@@ -26,12 +25,9 @@ class LaunchViewModelFactory(
 
 class LaunchViewModel(val activity: AppCompatActivity,
                       val settingsRepository: SettingsRepository,
-                      val profileRepository: ProfileRepository) : ViewModel() {
-    private val parentJob = Job()
-    private val coroutineContext: CoroutineContext get() = parentJob + Dispatchers.Default
-    private val scope = CoroutineScope(coroutineContext)
+                      val profileRepository: ProfileRepository) : ViewModelBase() {
 
-    val stateInteractor = StateInteractor(activity = activity, profileRepository = profileRepository, settingsRepository = settingsRepository)
+    private val stateInteractor = StateInteractor(activity = activity, profileRepository = profileRepository, settingsRepository = settingsRepository)
 
     fun syncSettingsAsync() : Deferred<SettingsModel?> {
         return stateInteractor.syncSettings(scope)
