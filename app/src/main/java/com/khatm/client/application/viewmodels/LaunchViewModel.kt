@@ -27,13 +27,17 @@ class LaunchViewModel(val activity: AppCompatActivity,
                       val settingsRepository: SettingsRepository,
                       val profileRepository: ProfileRepository) : ViewModelBase() {
 
-    private val stateInteractor = StateInteractor(activity = activity, profileRepository = profileRepository, settingsRepository = settingsRepository)
+    private val stateInteractor = StateInteractor(
+        activity = activity,
+        scope = scope,
+        profileRepository = profileRepository,
+        settingsRepository = settingsRepository)
 
     fun syncSettingsAsync() : Deferred<SettingsModel?> {
-        return stateInteractor.syncSettings(scope)
+        return stateInteractor.syncSettings()
     }
 
     fun syncProfile() : Deferred<UserModel?> {
-        return stateInteractor.syncUser(scope)
+        return stateInteractor.syncUser()
     }
 }

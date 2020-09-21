@@ -34,7 +34,11 @@ class AuthViewModel(val activity: AppCompatActivity,
                     val settingsRepository: SettingsRepository,
                     val profileRepository: ProfileRepository) : ViewModelBase() {
 
-    private val stateInteractor = StateInteractor(activity = activity, profileRepository = profileRepository, settingsRepository = settingsRepository)
+    private val stateInteractor = StateInteractor(
+        activity = activity,
+        scope = scope,
+        profileRepository = profileRepository,
+        settingsRepository = settingsRepository)
     private var mGoogleSignInClient: GoogleSignInClient
 
     init {
@@ -64,12 +68,12 @@ class AuthViewModel(val activity: AppCompatActivity,
         val googleAccount = GoogleSignIn.getSignedInAccountFromIntent(googleAuthData).getResult(
             ApiException::class.java)
 
-        return stateInteractor.syncAuthentication(scope, googleAccount)
+        return stateInteractor.syncAuthentication(googleAccount)
     }
 
     fun deauthorizeAsync() : Deferred<Boolean> {
         mGoogleSignInClient.signOut()
 
-        return stateInteractor.unsyncAuthentication(scope)
+        return stateInteractor.unsyncAuthentication()
     }
 }

@@ -9,9 +9,12 @@ import com.khatm.client.domain.repositories.ProfileRepository
 import com.khatm.client.domain.repositories.SettingsRepository
 import kotlinx.coroutines.*
 
-class StateInteractor(val activity: AppCompatActivity, val settingsRepository: SettingsRepository, val profileRepository: ProfileRepository) {
+class StateInteractor(private val activity: AppCompatActivity,
+                      private val scope: CoroutineScope,
+                      private val settingsRepository: SettingsRepository,
+                      private val profileRepository: ProfileRepository) {
 
-    fun syncSettings(scope: CoroutineScope) : Deferred<SettingsModel?> {
+    fun syncSettings() : Deferred<SettingsModel?> {
         val future = CompletableDeferred<SettingsModel?>()
 
         scope.launch {
@@ -33,7 +36,7 @@ class StateInteractor(val activity: AppCompatActivity, val settingsRepository: S
         return future
     }
 
-    fun syncUser(scope: CoroutineScope) : Deferred<UserModel?> {
+    fun syncUser() : Deferred<UserModel?> {
         val future = CompletableDeferred<UserModel?>()
 
         scope.launch {
@@ -51,7 +54,7 @@ class StateInteractor(val activity: AppCompatActivity, val settingsRepository: S
         return future
     }
 
-    fun syncAuthentication(scope: CoroutineScope, googleAccount: GoogleSignInAccount?) : Deferred<UserModel?> {
+    fun syncAuthentication(googleAccount: GoogleSignInAccount?) : Deferred<UserModel?> {
         val future = CompletableDeferred<UserModel?>()
 
         scope.launch {
@@ -79,7 +82,7 @@ class StateInteractor(val activity: AppCompatActivity, val settingsRepository: S
         return future
     }
 
-    fun unsyncAuthentication(scope: CoroutineScope) : Deferred<Boolean> {
+    fun unsyncAuthentication() : Deferred<Boolean> {
         val future = CompletableDeferred<Boolean>()
 
         scope.launch {

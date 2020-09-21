@@ -8,9 +8,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
 
-class ContentInteractor(val activity: AppCompatActivity, val booksRepository: BooksRepository) {
+class ContentInteractor(private val activity: AppCompatActivity,
+                        private val scope: CoroutineScope,
+                        private val booksRepository: BooksRepository) {
 
-    fun syncBooks(scope: CoroutineScope) : Deferred<List<BookModel>?> {
+    fun syncBooks() : Deferred<List<BookModel>?> {
         val future = CompletableDeferred<List<BookModel>?>()
 
         scope.launch {

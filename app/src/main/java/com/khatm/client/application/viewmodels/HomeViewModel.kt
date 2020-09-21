@@ -22,9 +22,12 @@ class HomeViewModelFactory(
 class HomeViewModel(val activity: AppCompatActivity,
                     val booksRepository: BooksRepository) : ViewModelBase() {
 
-    private val contentInteractor = ContentInteractor(activity = activity, booksRepository = booksRepository)
+    private val contentInteractor = ContentInteractor(
+        activity = activity,
+        scope = scope,
+        booksRepository = booksRepository)
 
     fun syncBooksAsync() : Deferred<List<BookModel>?> {
-        return contentInteractor.syncBooks(scope)
+        return contentInteractor.syncBooks()
     }
 }
