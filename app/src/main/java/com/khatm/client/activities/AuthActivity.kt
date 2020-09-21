@@ -9,9 +9,6 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.api.ApiException
 import com.khatm.client.R
-import com.khatm.client.extensions.BaseActivity
-import com.khatm.client.extensions.dismissLoading
-import com.khatm.client.extensions.displayLoading
 import com.khatm.client.application.viewmodels.AuthViewModel
 import com.khatm.client.application.viewmodels.AuthViewModelFactory
 import com.khatm.client.repositoryInstances.ProfileRepositoryInstance
@@ -20,7 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class AuthActivity : BaseActivity() {
+class AuthActivity : ActivityBase() {
 
     private lateinit var authViewModel: AuthViewModel
 

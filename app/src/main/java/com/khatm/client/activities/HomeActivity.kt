@@ -12,9 +12,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.khatm.client.R
 import com.khatm.client.application.viewmodels.*
-import com.khatm.client.extensions.BaseActivity
-import com.khatm.client.extensions.dismissLoading
-import com.khatm.client.extensions.displayLoading
 import com.khatm.client.repositoryInstances.BooksRepositoryInstance
 import com.khatm.client.repositoryInstances.ProfileRepositoryInstance
 import com.khatm.client.repositoryInstances.SettingsRepositoryInstance
@@ -22,7 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class HomeActivity : BaseActivity() {
+class HomeActivity : ActivityBase() {
     private lateinit var homeViewModel: HomeViewModel
 
     lateinit var signOutButton: Button

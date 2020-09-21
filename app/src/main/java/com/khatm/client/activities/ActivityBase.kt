@@ -1,17 +1,14 @@
-package com.khatm.client.extensions
+package com.khatm.client.activities
 
 
-import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.khatm.client.R
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.*
 
 /*
 * Loading Indicator Controls
@@ -40,7 +37,7 @@ val AppCompatActivity.mainLayout: ViewGroup
     }
 
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class ActivityBase : AppCompatActivity() {
     /*
     * The following is code to observe responses to asynchronous Intent actions
     *
@@ -53,7 +50,12 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         resultByCode[requestCode]?.let {
-            it.complete(ActivityResult(resultCode, data))
+            it.complete(
+                ActivityResult(
+                    resultCode,
+                    data
+                )
+            )
             resultByCode.remove(requestCode)
         } ?: run {
             super.onActivityResult(requestCode, resultCode, data)
