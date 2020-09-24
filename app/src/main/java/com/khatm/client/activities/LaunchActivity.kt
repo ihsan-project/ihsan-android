@@ -36,7 +36,7 @@ class LaunchActivity : AppCompatActivity() {
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val settings = launchViewModel.syncSettingsAsync().await()
+                val settings = launchViewModel.syncSettings()
 
                 settings?.let {
                     Log.d("LaunchActivity", "Load settings success")
@@ -49,7 +49,7 @@ class LaunchActivity : AppCompatActivity() {
 
             var intent = Intent(this@LaunchActivity, AuthActivity::class.java)
 
-            val user = launchViewModel.syncProfile().await()
+            val user = launchViewModel.syncProfile()
             user?.access?.let {
                 if (it.isNotBlank()) {
                     Log.d("LaunchActivity", "Already Logged in")

@@ -69,7 +69,7 @@ class HomeActivity : ActivityBase() {
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val books = homeViewModel.syncBooksAsync().await()
+                val books = homeViewModel.syncBooks()
 
                 books?.let {
                     Log.d("HomeActivity", "Load books success")

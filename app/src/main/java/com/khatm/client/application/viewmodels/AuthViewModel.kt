@@ -7,10 +7,8 @@ import com.khatm.client.BuildConfig
 import com.khatm.client.application.proxies.GoogleSSOProxy
 import com.khatm.client.domain.interactors.StateInteractor
 import com.khatm.client.domain.models.UserModel
-import com.khatm.client.domain.repositories.SSOAccount
 import com.khatm.client.domain.repositories.ProfileRepository
 import com.khatm.client.domain.repositories.SettingsRepository
-import kotlinx.coroutines.*
 
 
 class AuthViewModelFactory(
@@ -33,11 +31,7 @@ class AuthViewModel(val activity: AppCompatActivity,
                     val profileRepository: ProfileRepository,
                     val googleSSOProxy: GoogleSSOProxy) : ViewModelBase() {
 
-    private val stateInteractor = StateInteractor(
-        activity = activity,
-        scope = scope,
-        profileRepository = profileRepository,
-        settingsRepository = settingsRepository)
+    private val stateInteractor = StateInteractor(settingsRepository, profileRepository)
 
     val versionString: String
         get() {
@@ -51,7 +45,7 @@ class AuthViewModel(val activity: AppCompatActivity,
         val account = googleSSOProxy.signIn()
 
         account?.let {
-            return stateInteractor.syncAuthentication(it).await()
+            return stateInteractor.syncAuthenticationAsync(it).await()
         }
 
         return null
@@ -60,6 +54,6 @@ class AuthViewModel(val activity: AppCompatActivity,
     suspend fun deauthorize() {
         googleSSOProxy.signOut()
 
-        stateInteractor.unsyncAuthentication().await()
+        stateInteractor.unsyncAuthenticationAsync().await()
     }
 }

@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.khatm.client.domain.interactors.ContentInteractor
 import com.khatm.client.domain.models.BookModel
 import com.khatm.client.domain.repositories.BooksRepository
-import kotlinx.coroutines.Deferred
 
 class HomeViewModelFactory(
     val activity: AppCompatActivity,
@@ -22,12 +21,9 @@ class HomeViewModelFactory(
 class HomeViewModel(val activity: AppCompatActivity,
                     val booksRepository: BooksRepository) : ViewModelBase() {
 
-    private val contentInteractor = ContentInteractor(
-        activity = activity,
-        scope = scope,
-        booksRepository = booksRepository)
+    private val contentInteractor = ContentInteractor(booksRepository)
 
-    fun syncBooksAsync() : Deferred<List<BookModel>?> {
-        return contentInteractor.syncBooks()
+    suspend fun syncBooks() : List<BookModel>? {
+        return contentInteractor.syncBooksAsync().await()
     }
 }
