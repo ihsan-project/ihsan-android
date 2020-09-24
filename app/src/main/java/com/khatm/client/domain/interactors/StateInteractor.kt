@@ -1,17 +1,17 @@
 package com.khatm.client.domain.interactors
 
-import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.khatm.client.ApiFactory
 import com.khatm.client.domain.models.SettingsModel
 import com.khatm.client.domain.models.UserModel
+import com.khatm.client.domain.repositories.SSOAccount
 import com.khatm.client.domain.repositories.ProfileRepository
 import com.khatm.client.domain.repositories.SettingsRepository
 import kotlinx.coroutines.*
 
-class StateInteractor(val activity: AppCompatActivity, val settingsRepository: SettingsRepository, val profileRepository: ProfileRepository) {
+class StateInteractor(private val settingsRepository: SettingsRepository,
+                      private val profileRepository: ProfileRepository) : InteractorBase() {
 
-    fun syncSettings(scope: CoroutineScope) : Deferred<SettingsModel?> {
+    fun syncSettingsAsync() : Deferred<SettingsModel?> {
         val future = CompletableDeferred<SettingsModel?>()
 
         scope.launch {
@@ -33,7 +33,7 @@ class StateInteractor(val activity: AppCompatActivity, val settingsRepository: S
         return future
     }
 
-    fun syncUser(scope: CoroutineScope) : Deferred<UserModel?> {
+    fun syncUserAsync() : Deferred<UserModel?> {
         val future = CompletableDeferred<UserModel?>()
 
         scope.launch {
@@ -51,17 +51,17 @@ class StateInteractor(val activity: AppCompatActivity, val settingsRepository: S
         return future
     }
 
-    fun syncAuthentication(scope: CoroutineScope, googleAccount: GoogleSignInAccount?) : Deferred<UserModel?> {
+    fun syncAuthenticationAsync(account: SSOAccount) : Deferred<UserModel?> {
         val future = CompletableDeferred<UserModel?>()
 
         scope.launch {
             val settings = settingsRepository.settingsFromDbAsync.await()
 
             val authenticatedProfile = profileRepository.authorizeWithServer(
-                googleAccount?.id,
-                googleAccount?.email,
-                googleAccount?.displayName,
-                googleAccount?.idToken,
+                account.id,
+                account.email,
+                account.displayName,
+                account.idToken,
                 settings?.constants?.platforms?.get("google")
             )
 
@@ -79,7 +79,7 @@ class StateInteractor(val activity: AppCompatActivity, val settingsRepository: S
         return future
     }
 
-    fun unsyncAuthentication(scope: CoroutineScope) : Deferred<Boolean> {
+    fun unsyncAuthenticationAsync() : Deferred<Boolean> {
         val future = CompletableDeferred<Boolean>()
 
         scope.launch {

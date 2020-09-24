@@ -12,9 +12,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.khatm.client.R
 import com.khatm.client.application.viewmodels.*
-import com.khatm.client.extensions.BaseActivity
-import com.khatm.client.extensions.dismissLoading
-import com.khatm.client.extensions.displayLoading
+import com.khatm.client.proxyInstances.GoogleSSOProxyInstance
 import com.khatm.client.repositoryInstances.BooksRepositoryInstance
 import com.khatm.client.repositoryInstances.ProfileRepositoryInstance
 import com.khatm.client.repositoryInstances.SettingsRepositoryInstance
@@ -22,7 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class HomeActivity : BaseActivity() {
+class HomeActivity : ActivityBase() {
     private lateinit var homeViewModel: HomeViewModel
 
     lateinit var signOutButton: Button
@@ -71,7 +69,7 @@ class HomeActivity : BaseActivity() {
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val books = homeViewModel.syncBooksAsync().await()
+                val books = homeViewModel.syncBooks()
 
                 books?.let {
                     Log.d("HomeActivity", "Load books success")
@@ -91,12 +89,13 @@ class HomeActivity : BaseActivity() {
         // TODO: Need to move this to a better place
         val settingsRepository = SettingsRepositoryInstance(this)
         val profileRepository = ProfileRepositoryInstance(this)
+        val googleSSOProxy = GoogleSSOProxyInstance(this)
         val authViewModel = ViewModelProviders
-            .of(this, AuthViewModelFactory(this, settingsRepository, profileRepository))
+            .of(this, AuthViewModelFactory(this, settingsRepository, profileRepository, googleSSOProxy))
             .get(AuthViewModel::class.java)
 
         GlobalScope.launch(Dispatchers.Main) {
-            authViewModel.deauthorizeAsync().await()
+            authViewModel.deauthorize()
 
             Toast.makeText(this@HomeActivity, "Successfully signed out", Toast.LENGTH_SHORT).show()
 

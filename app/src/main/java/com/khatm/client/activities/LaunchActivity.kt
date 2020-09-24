@@ -7,8 +7,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.api.ApiException
-import com.khatm.client.extensions.dismissLoading
-import com.khatm.client.extensions.displayLoading
 import com.khatm.client.application.viewmodels.LaunchViewModel
 import com.khatm.client.application.viewmodels.LaunchViewModelFactory
 import com.khatm.client.repositoryInstances.ProfileRepositoryInstance
@@ -38,7 +36,7 @@ class LaunchActivity : AppCompatActivity() {
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val settings = launchViewModel.syncSettingsAsync().await()
+                val settings = launchViewModel.syncSettings()
 
                 settings?.let {
                     Log.d("LaunchActivity", "Load settings success")
@@ -51,7 +49,7 @@ class LaunchActivity : AppCompatActivity() {
 
             var intent = Intent(this@LaunchActivity, AuthActivity::class.java)
 
-            val user = launchViewModel.syncProfile().await()
+            val user = launchViewModel.syncProfile()
             user?.access?.let {
                 if (it.isNotBlank()) {
                     Log.d("LaunchActivity", "Already Logged in")
