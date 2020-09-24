@@ -50,12 +50,7 @@ abstract class ActivityBase : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         resultByCode[requestCode]?.let {
-            it.complete(
-                ActivityResult(
-                    resultCode,
-                    data
-                )
-            )
+            it.complete(ActivityResult(resultCode, data))
             resultByCode.remove(requestCode)
         } ?: run {
             super.onActivityResult(requestCode, resultCode, data)
