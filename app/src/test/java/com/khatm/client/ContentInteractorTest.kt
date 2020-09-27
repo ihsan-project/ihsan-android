@@ -20,7 +20,10 @@ class ContentInteractorTest {
                     val future = CompletableDeferred<List<BookModel>?>()
 
                     runBlocking {
-                        future.complete(listOf(BookModel(1, "slug", "title", 1)))
+                        future.complete(listOf(
+                            BookModel(1, "slug1", "title1", 1),
+                            BookModel(2, "slug2", "title2", 1)
+                        ))
                     }
 
                     return future
@@ -42,7 +45,7 @@ class ContentInteractorTest {
         runBlocking {
             val books = contentInteractor.syncBooksAsync().await()
 
-            assertEquals(1, books?.size)
+            assertEquals(2, books?.size)
             assertEquals(1, books?.first()?.id)
         }
     }
