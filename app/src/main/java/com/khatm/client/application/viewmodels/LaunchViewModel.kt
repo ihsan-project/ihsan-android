@@ -32,7 +32,7 @@ class LaunchViewModel(val activity: AppCompatActivity,
         return stateInteractor.syncSettingsAsync().await()
     }
 
-    suspend fun syncProfile() : UserModel? {
-        return stateInteractor.syncUserAsync().await()
+    suspend fun isLoggedIn() : Boolean {
+        return stateInteractor.loginState.await()
     }
 }
