@@ -67,8 +67,11 @@ class StateInteractor(private val settingsRepository: SettingsRepository,
             authenticatedProfile?.let {
                 profileRepository.storeToDb(it)
 
-                if (it.access.isNotBlank()) {
-                    ApiFactory.authToken = it.access
+                it.access?.let {
+                    if (it.isNotBlank()) {
+                        // TODO: This is breaking dependency rule
+                        ApiFactory.authToken = it
+                    }
                 }
             }
 
