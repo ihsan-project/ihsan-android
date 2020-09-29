@@ -33,23 +33,22 @@ class StateInteractor(private val settingsRepository: SettingsRepository,
         return future
     }
 
-    fun syncUserAsync() : Deferred<UserModel?> {
-        val future = CompletableDeferred<UserModel?>()
+    val loginState: Deferred<Boolean>
+        get() {
+            val future = CompletableDeferred<Boolean>()
 
-        scope.launch {
-            val user = profileRepository.profileFromDbAsync.await()
+            scope.launch {
+                val user = profileRepository.profileFromDbAsync.await()
 
-            user?.access?.let {
-                if (it.isNotBlank()) {
-                    ApiFactory.authToken = it
+                if (user?.access != null && user?.access?.isNotBlank()) {
+                    future.complete(true)
+                } else {
+                    future.complete(false)
                 }
             }
 
-            future.complete(user)
+            return future
         }
-
-        return future
-    }
 
     fun syncAuthenticationAsync(account: SSOAccount) : Deferred<UserModel?> {
         val future = CompletableDeferred<UserModel?>()

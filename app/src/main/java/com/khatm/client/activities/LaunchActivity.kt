@@ -49,12 +49,9 @@ class LaunchActivity : AppCompatActivity() {
 
             var intent = Intent(this@LaunchActivity, AuthActivity::class.java)
 
-            val user = launchViewModel.syncProfile()
-            user?.access?.let {
-                if (it.isNotBlank()) {
-                    Log.d("LaunchActivity", "Already Logged in")
-                    intent = Intent(this@LaunchActivity, HomeActivity::class.java)
-                }
+            if (launchViewModel.isLoggedIn()) {
+                Log.d("LaunchActivity", "Already Logged in")
+                intent = Intent(this@LaunchActivity, HomeActivity::class.java)
             }
 
             dismissLoading()
