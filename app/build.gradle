@@ -79,7 +79,7 @@ dependencies {
 
     // Unit Tests
     testImplementation 'junit:junit:4.12'
-//    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
+    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutineVersion"
 
     // UI Tests

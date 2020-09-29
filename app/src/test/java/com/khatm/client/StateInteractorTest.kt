@@ -12,6 +12,7 @@ import kotlinx.coroutines.*
 
 import org.junit.Test
 import org.junit.Assert.*
+import org.mockito.Mockito
 
 
 class StateInteractorTest {
@@ -19,14 +20,23 @@ class StateInteractorTest {
     fun syncSettings() {
         class SettingsRepositoryInstance : SettingsRepository {
             override val settingsFromDbAsync: Deferred<SettingsModel?>
-                get() = TODO("Not yet implemented")
+                get() {
+                    val future = CompletableDeferred<SettingsModel?>()
+
+                    future.complete(null)
+
+                    return future
+                }
 
             override suspend fun settingsFromServer(currentVersion: Int): SettingsModel? {
-                return SettingsModel(1, Constants())
+                val mockConstant = Mockito.mock(Constants::class.java)
+                val mockFeatures = Mockito.mock(Features::class.java)
+
+                return SettingsModel(1, mockConstant, mockFeatures)
             }
 
             override fun storeToDb(settings: SettingsModel) {
-                TODO("Not yet implemented")
+
             }
         }
         class ProfileRepositoryInstance : ProfileRepository {
@@ -60,8 +70,7 @@ class StateInteractorTest {
         runBlocking {
             val settings = stateInteractor.syncSettingsAsync().await()
 
-            assertEquals(2, books?.size)
-            assertEquals(1, books?.first()?.id)
+            assertEquals(1, settings?.version)
         }
     }
 }
