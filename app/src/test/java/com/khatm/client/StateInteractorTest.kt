@@ -193,7 +193,6 @@ class StateInteractorTest {
                     val future = CompletableDeferred<SettingsModel?>()
 
                     val mockSettings = Mockito.mock(SettingsModel::class.java)
-//                    Mockito.`when`(mockSettings).thenReturn("someValue")
 
                     future.complete(mockSettings)
 
@@ -214,7 +213,6 @@ class StateInteractorTest {
                     val future = CompletableDeferred<UserModel?>()
 
                     val mockUser = Mockito.mock(UserModel::class.java)
-                    Mockito.`when`(mockUser.access).thenReturn("someValue")
 
                     future.complete(mockUser)
 
