@@ -8,8 +8,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.api.ApiException
+import com.khatm.client.ApiFactory
 import com.khatm.client.R
 import com.khatm.client.application.viewmodels.AuthViewModel
+import com.khatm.client.application.viewmodels.AuthViewModelDelegate
 import com.khatm.client.application.viewmodels.AuthViewModelFactory
 import com.khatm.client.proxyInstances.GoogleSSOProxyInstance
 import com.khatm.client.repositoryInstances.ProfileRepositoryInstance
@@ -18,7 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class AuthActivity : ActivityBase() {
+class AuthActivity : ActivityBase(), AuthViewModelDelegate {
 
     private lateinit var authViewModel: AuthViewModel
 
@@ -73,5 +75,13 @@ class AuthActivity : ActivityBase() {
                 dismissLoading()
             }
         }
+    }
+
+    override suspend fun setAuthToken(token: String?) {
+        ApiFactory.authToken = token
+    }
+
+    override suspend fun clearAuthToken() {
+        ApiFactory.authToken = null
     }
 }

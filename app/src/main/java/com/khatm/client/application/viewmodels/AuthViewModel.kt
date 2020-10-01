@@ -3,6 +3,7 @@ package com.khatm.client.application.viewmodels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.khatm.client.ApiFactory
 import com.khatm.client.BuildConfig
 import com.khatm.client.application.proxies.GoogleSSOProxy
 import com.khatm.client.domain.interactors.StateInteractor
@@ -26,11 +27,17 @@ class AuthViewModelFactory(
         ).newInstance(activity, settingsRepository, profileRepository, googleSSOProxy)
 }
 
+interface AuthViewModelDelegate {
+    suspend fun setAuthToken(token: String?)
+    suspend fun clearAuthToken()
+}
+
 class AuthViewModel(val activity: AppCompatActivity,
                     val settingsRepository: SettingsRepository,
                     val profileRepository: ProfileRepository,
                     val googleSSOProxy: GoogleSSOProxy) : ViewModelBase() {
 
+    var delegate: AuthViewModelDelegate? = null
     private val stateInteractor = StateInteractor(settingsRepository, profileRepository)
 
     val versionString: String
@@ -45,7 +52,15 @@ class AuthViewModel(val activity: AppCompatActivity,
         val account = googleSSOProxy.signIn()
 
         account?.let {
-            return stateInteractor.syncAuthenticationAsync(it).await()
+            val profile = stateInteractor.syncAuthenticationAsync(it).await()
+
+            profile?.access?.let {
+                if (it.isNotBlank()) {
+                    delegate?.setAuthToken(ApiFactory.authToken)
+                }
+            }
+
+            return profile
         }
 
         return null
@@ -55,5 +70,7 @@ class AuthViewModel(val activity: AppCompatActivity,
         googleSSOProxy.signOut()
 
         stateInteractor.unsyncAuthenticationAsync().await()
+
+        delegate?.clearAuthToken()
     }
 }

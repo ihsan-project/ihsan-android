@@ -1,16 +1,16 @@
 package com.khatm.client.domain.interactors
 
-import com.khatm.client.ApiFactory
 import com.khatm.client.domain.models.SettingsModel
 import com.khatm.client.domain.models.UserModel
-import com.khatm.client.domain.repositories.SSOAccount
 import com.khatm.client.domain.repositories.ProfileRepository
+import com.khatm.client.domain.repositories.SSOAccount
 import com.khatm.client.domain.repositories.SettingsRepository
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.launch
 
 class StateInteractor(private val settingsRepository: SettingsRepository,
                       private val profileRepository: ProfileRepository) : InteractorBase() {
-
     fun syncSettingsAsync() : Deferred<SettingsModel?> {
         val future = CompletableDeferred<SettingsModel?>()
 
@@ -66,13 +66,6 @@ class StateInteractor(private val settingsRepository: SettingsRepository,
 
             authenticatedProfile?.let {
                 profileRepository.storeToDb(it)
-
-                it.access?.let {
-                    if (it.isNotBlank()) {
-                        // TODO: This is breaking dependency rule
-                        ApiFactory.authToken = it
-                    }
-                }
             }
 
             future.complete(authenticatedProfile)
@@ -89,7 +82,6 @@ class StateInteractor(private val settingsRepository: SettingsRepository,
 
             user?.let {
                 profileRepository.deleteFromDb(it)
-                ApiFactory.authToken = null
             }
 
             future.complete(true)
