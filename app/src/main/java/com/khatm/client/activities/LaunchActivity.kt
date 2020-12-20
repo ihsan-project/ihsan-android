@@ -7,7 +7,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.api.ApiException
+import com.khatm.client.ApiFactory
+import com.khatm.client.application.viewmodels.AuthViewModelDelegate
 import com.khatm.client.application.viewmodels.LaunchViewModel
+import com.khatm.client.application.viewmodels.LaunchViewModelDelegate
 import com.khatm.client.application.viewmodels.LaunchViewModelFactory
 import com.khatm.client.repositoryInstances.ProfileRepositoryInstance
 import com.khatm.client.repositoryInstances.SettingsRepositoryInstance
@@ -16,7 +19,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-class LaunchActivity : AppCompatActivity() {
+class LaunchActivity : ActivityBase(), LaunchViewModelDelegate {
     private lateinit var launchViewModel: LaunchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +30,7 @@ class LaunchActivity : AppCompatActivity() {
         launchViewModel = ViewModelProviders
             .of(this, LaunchViewModelFactory(this, settingsRepository, profileRepository))
             .get(LaunchViewModel::class.java)
+        launchViewModel.delegate = this
     }
 
     override fun onStart() {
@@ -51,6 +55,9 @@ class LaunchActivity : AppCompatActivity() {
 
             if (launchViewModel.isLoggedIn()) {
                 Log.d("LaunchActivity", "Already Logged in")
+
+                launchViewModel.syncLoggedInAuth()
+
                 intent = Intent(this@LaunchActivity, HomeActivity::class.java)
             }
 
@@ -58,6 +65,10 @@ class LaunchActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+    }
+
+    override suspend fun setAuthToken(token: String?) {
+        ApiFactory.authToken = token
     }
 
 }

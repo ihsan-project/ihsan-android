@@ -50,6 +50,18 @@ class StateInteractor(private val settingsRepository: SettingsRepository,
             return future
         }
 
+    val loggedInUser: Deferred<UserModel?>
+        get() {
+            val future = CompletableDeferred<UserModel?>()
+
+            scope.launch {
+                val user = profileRepository.profileFromDbAsync.await()
+                future.complete(user)
+            }
+
+            return future
+        }
+
     fun syncAuthenticationAsync(account: SSOAccount) : Deferred<UserModel?> {
         val future = CompletableDeferred<UserModel?>()
 
