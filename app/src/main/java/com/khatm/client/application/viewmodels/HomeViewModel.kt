@@ -23,7 +23,7 @@ class HomeViewModel(val activity: AppCompatActivity,
 
     private val contentInteractor = ContentInteractor(booksRepository)
 
-    suspend fun syncBooks() : List<BookModel>? {
-        return contentInteractor.syncBooksAsync().await()
+    suspend fun getBooks() : List<BookModel>? {
+        return contentInteractor.getBooksAsync(1).await()
     }
 }

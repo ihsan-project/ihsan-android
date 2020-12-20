@@ -69,14 +69,14 @@ class HomeActivity : ActivityBase() {
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val books = homeViewModel.syncBooks()
+                val books = homeViewModel.getBooks()
 
                 books?.let {
                     Log.d("HomeActivity", "Load books success")
                 }
             }
             catch (e: ApiException) {
-                Log.d("HomeActivity", "Failed Settings: $e")
+                Log.d("HomeActivity", "Failed Books: $e")
                 Toast.makeText(this@HomeActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
             }
 
