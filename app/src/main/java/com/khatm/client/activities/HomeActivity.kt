@@ -7,10 +7,13 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.khatm.client.R
+import com.khatm.client.adapters.BooksRecyclerAdapter
 import com.khatm.client.application.viewmodels.*
 import com.khatm.client.proxyInstances.GoogleSSOProxyInstance
 import com.khatm.client.repositoryInstances.BooksRepositoryInstance
@@ -27,6 +30,10 @@ class HomeActivity : ActivityBase() {
     lateinit var textViewName : TextView
     lateinit var textViewEmail : TextView
     lateinit var textViewId : TextView
+    lateinit var booksRecyclerView : RecyclerView
+
+    private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var adapter: BooksRecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -42,6 +49,7 @@ class HomeActivity : ActivityBase() {
         textViewEmail = findViewById(R.id.textViewEmail)
         textViewId = findViewById(R.id.textViewId)
         signOutButton = findViewById(R.id.button_sign_out_google)
+        booksRecyclerView = findViewById(R.id.recyclerView_books)
 
         signOutButton.setOnClickListener {
             signOut()
@@ -59,6 +67,9 @@ class HomeActivity : ActivityBase() {
             textViewEmail.setText("Email: " + email)
             textViewId.setText("ID: " + id)
         }
+
+        linearLayoutManager = LinearLayoutManager(this)
+        booksRecyclerView.layoutManager = linearLayoutManager
     }
 
 
@@ -73,6 +84,8 @@ class HomeActivity : ActivityBase() {
 
                 books?.let {
                     Log.d("HomeActivity", "Load books success")
+
+                    booksRecyclerView.adapter = BooksRecyclerAdapter(it)
                 }
             }
             catch (e: ApiException) {
