@@ -5,7 +5,14 @@ import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 
 data class Books(
-    val results: List<BookModel>
+    val results: List<BookModel>,
+    val meta: PaginationMetaData
+)
+
+data class PaginationMetaData(
+    val count: Int,
+    val pageCount: Int,
+    val totalCount: Int
 )
 
 @Entity(tableName = "books")

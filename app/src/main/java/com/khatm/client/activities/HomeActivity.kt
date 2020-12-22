@@ -21,6 +21,7 @@ import com.khatm.client.repositoryInstances.ProfileRepositoryInstance
 import com.khatm.client.repositoryInstances.SettingsRepositoryInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class HomeActivity : ActivityBase() {
@@ -70,30 +71,36 @@ class HomeActivity : ActivityBase() {
 
         linearLayoutManager = LinearLayoutManager(this)
         booksRecyclerView.layoutManager = linearLayoutManager
+
+        adapter = BooksRecyclerAdapter()
+        booksRecyclerView.adapter = adapter
     }
 
 
     override fun onStart() {
         super.onStart()
 
-        displayLoading()
+//        displayLoading()
 
         GlobalScope.launch(Dispatchers.Main) {
-            try {
-                val books = homeViewModel.getBooks()
-
-                books?.let {
-                    Log.d("HomeActivity", "Load books success")
-
-                    booksRecyclerView.adapter = BooksRecyclerAdapter(it)
-                }
+            homeViewModel.fetchBooks().collectLatest {
+                adapter.submitData(it)
             }
-            catch (e: ApiException) {
-                Log.d("HomeActivity", "Failed Books: $e")
-                Toast.makeText(this@HomeActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
-            }
-
-            dismissLoading()
+//            try {
+//                val books = homeViewModel.getBooks()
+//
+//                books?.let {
+//                    Log.d("HomeActivity", "Load books success")
+//
+//                    booksRecyclerView.adapter = BooksRecyclerAdapter()
+//                }
+//            }
+//            catch (e: ApiException) {
+//                Log.d("HomeActivity", "Failed Books: $e")
+//                Toast.makeText(this@HomeActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
+//            }
+//
+//            dismissLoading()
         }
     }
 
