@@ -16,7 +16,7 @@ class BooksRecyclerAdapter : PagingDataAdapter<BookModel, BooksRecyclerAdapter.B
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): BooksRecyclerAdapter.BookHolder {
+    ): BookHolder {
         val inflatedView = parent.inflate(R.layout.books_recyclerview_item, false)
         return BookHolder(inflatedView)
     }

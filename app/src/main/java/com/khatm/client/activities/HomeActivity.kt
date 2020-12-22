@@ -12,6 +12,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.khatm.client.R
 import com.khatm.client.adapters.BooksRecyclerAdapter
+import com.khatm.client.adapters.LoadingAdapter
 import com.khatm.client.application.viewmodels.*
 import com.khatm.client.proxyInstances.GoogleSSOProxyInstance
 import com.khatm.client.repositoryInstances.BooksRepositoryInstance
@@ -70,7 +71,10 @@ class HomeActivity : ActivityBase() {
         booksRecyclerView.layoutManager = linearLayoutManager
 
         adapter = BooksRecyclerAdapter()
-        booksRecyclerView.adapter = adapter
+        booksRecyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = LoadingAdapter { adapter.retry() },
+            footer = LoadingAdapter { adapter.retry() }
+        )
     }
 
 
