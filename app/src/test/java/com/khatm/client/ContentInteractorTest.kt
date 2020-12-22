@@ -1,11 +1,14 @@
 package com.khatm.client
 
+import androidx.paging.PagingData
 import com.khatm.client.domain.interactors.ContentInteractor
 import com.khatm.client.domain.models.BookModel
 import com.khatm.client.domain.models.Books
+import com.khatm.client.domain.models.PaginationMetaData
 import com.khatm.client.domain.repositories.BooksRepository
 
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
 
 import org.junit.Test
 import org.junit.Assert.*
@@ -15,25 +18,16 @@ class ContentInteractorTest {
     @Test
     fun syncBooks() {
         class BooksRepositoryInstance : BooksRepository {
-            override val booksFromDbAsync: Deferred<List<BookModel>?>
-                get() {
-                    val future = CompletableDeferred<List<BookModel>?>()
 
-                    runBlocking {
-                        future.complete(listOf(
-                            BookModel(1, "slug1", "title1", 1),
-                            BookModel(2, "slug2", "title2", 1)
-                        ))
-                    }
-
-                    return future
-                }
-
-            override suspend fun booksFromServer(): Books? {
-                TODO("Not yet implemented")
+            override suspend fun booksFromServer(page: Int): Books? {
+                val books = listOf(
+                    BookModel(1, "slug1", "title1", 1),
+                    BookModel(2, "slug2", "title2", 1)
+                )
+                return Books(books, meta = PaginationMetaData(count = 1, pageCount = 2, totalCount = 15))
             }
 
-            override fun storeToDb(books: List<BookModel>) {
+            override fun fetchBooks(): Flow<PagingData<BookModel>> {
                 TODO("Not yet implemented")
             }
         }
@@ -43,7 +37,7 @@ class ContentInteractorTest {
         val contentInteractor = ContentInteractor(booksRepsoitory)
 
         runBlocking {
-            val books = contentInteractor.syncBooksAsync().await()
+            val books = contentInteractor.getBooksAsync(1).await()
 
             assertEquals(2, books?.size)
             assertEquals(1, books?.first()?.id)
