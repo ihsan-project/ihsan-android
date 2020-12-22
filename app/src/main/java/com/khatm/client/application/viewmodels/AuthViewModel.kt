@@ -56,7 +56,7 @@ class AuthViewModel(val activity: AppCompatActivity,
 
             profile?.access?.let {
                 if (it.isNotBlank()) {
-                    delegate?.setAuthToken(ApiFactory.authToken)
+                    delegate?.setAuthToken(it)
                 }
             }
 

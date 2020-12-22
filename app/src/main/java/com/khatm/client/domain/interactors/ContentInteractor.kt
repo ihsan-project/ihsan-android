@@ -8,21 +8,13 @@ import kotlinx.coroutines.launch
 
 class ContentInteractor(private val booksRepository: BooksRepository) : InteractorBase() {
 
-    fun syncBooksAsync() : Deferred<List<BookModel>?> {
+    fun getBooksAsync(page: Int) : Deferred<List<BookModel>?> {
         val future = CompletableDeferred<List<BookModel>?>()
 
         scope.launch {
-            var books = booksRepository.booksFromDbAsync.await()
+            var books = booksRepository.booksFromServer(page)
 
-            if (books == null) {
-                val books = booksRepository.booksFromServer()
-
-                books?.let {
-                    booksRepository.storeToDb(books = it.books)
-                }
-            }
-
-            future.complete(books)
+            future.complete(books?.results)
         }
 
         return future

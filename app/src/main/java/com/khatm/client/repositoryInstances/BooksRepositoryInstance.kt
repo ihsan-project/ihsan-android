@@ -2,7 +2,6 @@ package com.khatm.client.repositoryInstances
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -24,38 +23,20 @@ class BooksRepositoryInstance(private val activity: AppCompatActivity) : BooksRe
         booksDao = db?.booksDao()
     }
 
-    override suspend fun booksFromServer() : Books? {
+    override suspend fun booksFromServer(page: Int) : Books? {
         val response = ApiFactory.call(
-            call = { booksApi.getBooksAsync().await() },
+            call = { booksApi.getBooks(page).await() },
             errorMessage = "Could not load books",
             context = activity.application.applicationContext)
 
         return response;
-    }
-
-    override val booksFromDbAsync : Deferred<List<BookModel>?>
-        get() {
-            val future = CompletableDeferred<List<BookModel>?>()
-
-            // Dispatch to main thread: https://stackoverflow.com/a/54090499
-            GlobalScope.launch(Dispatchers.Main) {
-                booksDao?.books?.observe(activity, Observer {
-                    future.complete(it)
-                })
-            }
-
-            return future
-        }
-
-    override fun storeToDb(books : List<BookModel>) {
-        booksDao?.insert(books)
     }
 }
 
 interface BooksApi {
 
     @GET("books")
-    fun getBooksAsync() : Deferred<Response<Books>>
+    fun getBooks(@retrofit2.http.Query("page") page: Int) : Deferred<Response<Books>>
 }
 
 @Dao

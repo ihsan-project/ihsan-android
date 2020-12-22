@@ -37,6 +37,7 @@ class AuthActivity : ActivityBase(), AuthViewModelDelegate {
         authViewModel = ViewModelProviders
             .of(this, AuthViewModelFactory(this, settingsRepository, profileRepository, googleSSOProxy))
             .get(AuthViewModel::class.java)
+        authViewModel.delegate = this
 
         setContentView(R.layout.activity_auth)
 

@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 
 data class Books(
-    val books: List<BookModel>
+    val results: List<BookModel>
 )
 
 @Entity(tableName = "books")

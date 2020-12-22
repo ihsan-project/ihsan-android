@@ -22,10 +22,15 @@ class LaunchViewModelFactory(
         ).newInstance(activity, settingsRepository, profileRepository)
 }
 
+interface LaunchViewModelDelegate {
+    suspend fun setAuthToken(token: String?)
+}
+
 class LaunchViewModel(val activity: AppCompatActivity,
                       val settingsRepository: SettingsRepository,
                       val profileRepository: ProfileRepository) : ViewModelBase() {
 
+    var delegate: LaunchViewModelDelegate? = null
     private val stateInteractor = StateInteractor(settingsRepository, profileRepository)
 
     suspend fun syncSettings() : SettingsModel? {
@@ -34,5 +39,11 @@ class LaunchViewModel(val activity: AppCompatActivity,
 
     suspend fun isLoggedIn() : Boolean {
         return stateInteractor.loginState.await()
+    }
+
+    suspend fun syncLoggedInAuth() {
+        stateInteractor.loggedInUser.await()?.let {
+            delegate?.setAuthToken(it.access)
+        }
     }
 }
