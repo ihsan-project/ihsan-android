@@ -7,7 +7,7 @@ import androidx.paging.PagingData
 import com.khatm.client.domain.interactors.ContentInteractor
 import com.khatm.client.domain.models.BookModel
 import com.khatm.client.domain.repositories.BooksRepository
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 
 class HomeViewModelFactory(
     val activity: AppCompatActivity,
@@ -25,11 +25,9 @@ class HomeViewModel(val activity: AppCompatActivity,
 
     private val contentInteractor = ContentInteractor(booksRepository)
 
-    suspend fun getBooks() : List<BookModel>? {
-        return contentInteractor.getBooksAsync(1).await()
-    }
-
-    fun fetchBooks(): Flow<PagingData<BookModel>> {
-        return contentInteractor.fetchBooks()
+    suspend fun onPage(block: suspend (PagingData<BookModel>) -> Unit) {
+        contentInteractor.fetchBooks().collectLatest {
+            block(it)
+        }
     }
 }

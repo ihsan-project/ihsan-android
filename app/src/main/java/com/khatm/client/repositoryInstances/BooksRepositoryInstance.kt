@@ -1,6 +1,5 @@
 package com.khatm.client.repositoryInstances
 
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.paging.Pager

@@ -11,7 +11,7 @@ import com.khatm.client.domain.models.BookModel
 import com.khatm.client.extensions.inflate
 import kotlinx.android.synthetic.main.books_recyclerview_item.view.*
 
-class BooksRecyclerAdapter : PagingDataAdapter<BookModel, BooksRecyclerAdapter.BookHolder>(DiffUtilCallBack()) {
+class BooksRecyclerAdapter : PagingDataAdapter<BookModel, BooksRecyclerAdapter.BookHolder>(BookDiffUtilCallBack()) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -21,10 +21,7 @@ class BooksRecyclerAdapter : PagingDataAdapter<BookModel, BooksRecyclerAdapter.B
         return BookHolder(inflatedView)
     }
 
-//    override fun getItemCount(): Int = books.size
-
     override fun onBindViewHolder(holder: BookHolder, position: Int) {
-//        holder.bindView(books[position])
         getItem(position)?.let { holder.bindView(it) }
     }
 
@@ -54,7 +51,7 @@ class BooksRecyclerAdapter : PagingDataAdapter<BookModel, BooksRecyclerAdapter.B
 
 }
 
-class DiffUtilCallBack : DiffUtil.ItemCallback<BookModel>() {
+class BookDiffUtilCallBack : DiffUtil.ItemCallback<BookModel>() {
     override fun areItemsTheSame(oldItem: BookModel, newItem: BookModel): Boolean {
         return oldItem.id == newItem.id
     }
