@@ -2,7 +2,6 @@ package com.khatm.client.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -11,9 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.common.api.ApiException
 import com.khatm.client.R
 import com.khatm.client.adapters.BooksRecyclerAdapter
+import com.khatm.client.adapters.LoadingAdapter
 import com.khatm.client.application.viewmodels.*
 import com.khatm.client.proxyInstances.GoogleSSOProxyInstance
 import com.khatm.client.repositoryInstances.BooksRepositoryInstance
@@ -70,30 +69,22 @@ class HomeActivity : ActivityBase() {
 
         linearLayoutManager = LinearLayoutManager(this)
         booksRecyclerView.layoutManager = linearLayoutManager
+
+        adapter = BooksRecyclerAdapter()
+        booksRecyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = LoadingAdapter { adapter.retry() },
+            footer = LoadingAdapter { adapter.retry() }
+        )
     }
 
 
     override fun onStart() {
         super.onStart()
 
-        displayLoading()
-
         GlobalScope.launch(Dispatchers.Main) {
-            try {
-                val books = homeViewModel.getBooks()
-
-                books?.let {
-                    Log.d("HomeActivity", "Load books success")
-
-                    booksRecyclerView.adapter = BooksRecyclerAdapter(it)
-                }
+            homeViewModel.onPage {
+                adapter.submitData(it)
             }
-            catch (e: ApiException) {
-                Log.d("HomeActivity", "Failed Books: $e")
-                Toast.makeText(this@HomeActivity, "Failed: $e", Toast.LENGTH_SHORT).show()
-            }
-
-            dismissLoading()
         }
     }
 

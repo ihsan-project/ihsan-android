@@ -3,9 +3,11 @@ package com.khatm.client.application.viewmodels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.PagingData
 import com.khatm.client.domain.interactors.ContentInteractor
 import com.khatm.client.domain.models.BookModel
 import com.khatm.client.domain.repositories.BooksRepository
+import kotlinx.coroutines.flow.collectLatest
 
 class HomeViewModelFactory(
     val activity: AppCompatActivity,
@@ -23,7 +25,9 @@ class HomeViewModel(val activity: AppCompatActivity,
 
     private val contentInteractor = ContentInteractor(booksRepository)
 
-    suspend fun getBooks() : List<BookModel>? {
-        return contentInteractor.getBooksAsync(1).await()
+    suspend fun onPage(block: suspend (PagingData<BookModel>) -> Unit) {
+        contentInteractor.fetchBooks().collectLatest {
+            block(it)
+        }
     }
 }
