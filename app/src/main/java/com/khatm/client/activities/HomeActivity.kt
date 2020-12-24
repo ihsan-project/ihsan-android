@@ -1,10 +1,8 @@
 package com.khatm.client.activities
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,10 +12,7 @@ import com.khatm.client.R
 import com.khatm.client.adapters.BooksRecyclerAdapter
 import com.khatm.client.adapters.LoadingAdapter
 import com.khatm.client.application.viewmodels.*
-import com.khatm.client.proxyInstances.GoogleSSOProxyInstance
 import com.khatm.client.repositoryInstances.BooksRepositoryInstance
-import com.khatm.client.repositoryInstances.ProfileRepositoryInstance
-import com.khatm.client.repositoryInstances.SettingsRepositoryInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -85,27 +80,6 @@ class HomeActivity : ActivityBase() {
             homeViewModel.onPage {
                 adapter.submitData(it)
             }
-        }
-    }
-
-
-    private fun signOut() {
-        // TODO: Need to move this to a better place
-        val settingsRepository = SettingsRepositoryInstance(this)
-        val profileRepository = ProfileRepositoryInstance(this)
-        val googleSSOProxy = GoogleSSOProxyInstance(this)
-        val authViewModel = ViewModelProviders
-            .of(this, AuthViewModelFactory(this, settingsRepository, profileRepository, googleSSOProxy))
-            .get(AuthViewModel::class.java)
-
-        GlobalScope.launch(Dispatchers.Main) {
-            authViewModel.deauthorize()
-
-            Toast.makeText(this@HomeActivity, "Successfully signed out", Toast.LENGTH_SHORT).show()
-
-            val intent = Intent(this@HomeActivity, AuthActivity::class.java)
-            startActivity(intent)
-            finish()
         }
     }
 }
