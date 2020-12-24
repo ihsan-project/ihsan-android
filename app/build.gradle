@@ -77,6 +77,8 @@ dependencies {
         exclude group: "com.android.support"
     }
 
+    implementation 'org.greenrobot:eventbus:3.2.0'
+
     apply plugin: 'com.google.gms.google-services'
 
     // Unit Tests

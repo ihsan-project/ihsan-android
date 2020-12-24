@@ -2,13 +2,20 @@ package com.khatm.client.activities
 
 
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.khatm.client.R
+import com.khatm.client.UnauthorizedEvent
 import kotlinx.coroutines.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
+
 
 /*
 * Loading Indicator Controls
@@ -19,7 +26,10 @@ fun AppCompatActivity.displayLoading() {
     val loadingLayout = inflater.inflate(R.layout.view_loading, null, false) as FrameLayout
     loadingLayout.setVisibility(View.VISIBLE);
 
-    var params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+    var params = FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams.MATCH_PARENT,
+        FrameLayout.LayoutParams.MATCH_PARENT
+    )
 
     loadingLayout.layoutParams = params
 
@@ -86,6 +96,21 @@ abstract class ActivityBase : AppCompatActivity() {
         }
         return activityResult
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    open fun onUnauthorizedEvent(event: UnauthorizedEvent) {
+        Log.i("mmi", "logout!!")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
 }
 
 /**
@@ -96,5 +121,6 @@ abstract class ActivityBase : AppCompatActivity() {
  */
 class ActivityResult(
     val resultCode: Int,
-    val data: Intent?) {
+    val data: Intent?
+) {
 }

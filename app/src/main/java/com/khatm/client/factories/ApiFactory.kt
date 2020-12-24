@@ -10,16 +10,18 @@ import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.greenrobot.eventbus.EventBus
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.IOException
 
+class UnauthorizedEvent
 
 object ApiFactory {
 
     var authToken: String? = null
-    private val authInterceptor = Interceptor {chain->
+    private val authInterceptor = Interceptor { chain->
         val newRequest = chain.request()
             .newBuilder()
             .addHeader("x-api-key", BuildConfig.apiKey)
@@ -49,7 +51,11 @@ object ApiFactory {
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()
 
-    suspend fun <T : Any> call(call: suspend () -> Response<T>, errorMessage: String, context: Context): T? {
+    suspend fun <T : Any> call(
+        call: suspend () -> Response<T>,
+        errorMessage: String,
+        context: Context
+    ): T? {
 
         val result : Result<T> = safeApiResult(call, errorMessage)
         var data : T? = null
@@ -77,7 +83,10 @@ object ApiFactory {
         return data
     }
 
-    private suspend fun <T: Any> safeApiResult(call: suspend ()-> Response<T>, errorMessage: String) : Result<T> {
+    private suspend fun <T : Any> safeApiResult(
+        call: suspend () -> Response<T>,
+        errorMessage: String
+    ) : Result<T> {
         val response = call.invoke()
         // Android Studio 3.5.2 has a hard time with debug breakpoints within this block
         if (response.isSuccessful) {
@@ -87,6 +96,8 @@ object ApiFactory {
 
             return Result.Success(response.body()!!)
         } else if (response.code() == 401) {
+            EventBus.getDefault().post(UnauthorizedEvent())
+
             return Result.ErrorUnauthenticated()
         }
 
@@ -94,7 +105,7 @@ object ApiFactory {
     }
 }
 
-sealed class Result<out T: Any> {
+sealed class Result<out T : Any> {
     data class Success<out T : Any>(val data: T) : Result<T>()
     class SuccessEmpty() : Result<Nothing>()
     data class Error(val exception: Exception) : Result<Nothing>()
