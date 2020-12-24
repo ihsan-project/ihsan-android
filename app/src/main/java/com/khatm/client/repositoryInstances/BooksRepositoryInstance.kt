@@ -58,17 +58,19 @@ class BookPagingSource(private val booksRepository: BooksRepository) :
 
             val response = booksRepository.booksFromServer(page)
 
+            val pageCount = response?.meta?.pageCount ?: 0
+
             var previousKey: String? = null
             if (page > 1) {
                 previousKey = (page - 1).toString()
             }
 
             var nextKey: String? = null
-            if (page < response!!.meta.pageCount) {
+            if (page < pageCount) {
                 nextKey = (page + 1).toString()
             }
 
-            LoadResult.Page(response!!.results, prevKey = previousKey, nextKey = nextKey)
+            LoadResult.Page(response?.results ?: listOf(), prevKey = previousKey, nextKey = nextKey)
         } catch (exception: IOException) {
             return LoadResult.Error(exception)
         } catch (exception: HttpException) {
