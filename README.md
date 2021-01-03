@@ -1,7 +1,7 @@
-# Khatm Android
+# Ihsan Android
 
-- [The Khatm Organization](https://khatm.org/)
-- [The Android Architecture](https://github.com/khatm-org/khatm-android/wiki/Architecture)
+- [The Ihsan Project](https://ihsanproject.com/)
+- [The Android Architecture](https://github.com/ihsan-project/ihsan-android/wiki/Architecture)
 
 ## Environment
 - Ruby 2.5.1p57 - As per `.ruby-version`
@@ -10,7 +10,7 @@
 ## Local Development with Android Studio
 
 1. Run `Gradle->Tasks->Android->signingReport` to get local SHA-1.
-1. Give this SHA-1 to the Khatm Admin and wait for them to add your fingerprint.
+1. Give this SHA-1 to the Ihsan Admin and wait for them to add your fingerprint.
 1. Once the Admin has added you, they will provide you with the following:
     - AWS_ACCESS_KEY_ID
     - AWS_SECRET_ACCESS_KEY
@@ -20,7 +20,7 @@
 1. Run the fastlane command `AWS_ACCESS_KEY_ID=[ENTER VALUE] AWS_SECRET_ACCESS_KEY=[ENTER VALUE] AWS_CERT_BUCKET=[ENTER VALUE] AWS_BUCKET_REGION=[ENTER VALUE] bundle exec fastlane setup_development`
 
 ### ngrok to use local instance of api server
-[ngrok](https://ngrok.com/) allows you to create a public tunnel to your local computer. This way if you are running the Khatm API server on your computer and it's listening on `http://localhost:3000`, you can create a public tunnel using `ngrok http 3000` and ngrok will provide you a public HTTPS URL that forwards any requests directly to your local server.
+[ngrok](https://ngrok.com/) allows you to create a public tunnel to your local computer. This way if you are running the [Ihsan Hapi API](https://github.com/ihsan-project/ihsan-api-hapi/wiki/Architecture) server on your computer and it's listening on `http://localhost:3000`, you can create a public tunnel using `ngrok http 3000` and ngrok will provide you a public HTTPS URL that forwards any requests directly to your local server.
 
 1. Open this project in Android Studio and let it sync.
 1. Once complete, you should see a `/local.properties` file in the root of this project
