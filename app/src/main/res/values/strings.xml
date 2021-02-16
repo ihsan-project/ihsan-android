@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Khatm</string>
+    <string name="app_name">Ihsan Project</string>
     <string name="welcome_message">Welcome!</string>
     <string name="google_login_button_message">Continue with Google</string>
     <string name="logo_image_content_desc">Logo Image</string>
