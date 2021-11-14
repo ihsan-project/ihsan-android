@@ -13,7 +13,7 @@ data class SettingsModel(
 )
 
 data class Constants(
-    @field:Json(name = "book_types") val books: Map<String, Int>,
+    @field:Json(name = "book_type") val books: Map<String, Int>,
     val platforms: Map<String, Int>
 )
 
