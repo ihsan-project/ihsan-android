@@ -73,7 +73,7 @@ class StateInteractor(private val settingsRepository: SettingsRepository,
                 account.email,
                 account.displayName,
                 account.idToken,
-                settings?.constants?.platforms?.get("google")
+                settings?.constants?.auth_platform?.get("google")
             )
 
             authenticatedProfile?.let {
