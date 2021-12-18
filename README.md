@@ -29,7 +29,7 @@
 ## Create Production APK
 
 1. Update the keys in `fastlane/env` from admin cert document and save.
-1. Run `cat fastlane/env >> ~/.bash_profile`.
+1. Run `cat fastlane/env >> ~/.bash_profile` or `cat fastlane/env >> ~/.zshrc`.
     1. DO NOT MERGE `fastlane/env` with production keys, undo the changes made.
 1. Run `source ~/.bash_profile`, or open new terminal session so updated bash settings are applied.
 1. Install fastlane and other gems with with `bundle install`
