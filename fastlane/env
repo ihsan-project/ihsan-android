@@ -2,7 +2,7 @@
 
 # Khatm Android Fastlane
 export KEYSTORE_PASSWORD="[Get from cert file]"
-export KEY_PASSWORD="[Get from cert file]"
+export KEY_ALIAS_PASSWORD="[Get from cert file]"
 export KEY_ALIAS="khatm-keystore-alias"
 export AWS_ACCESS_KEY_ID="[Get from cert file]"
 export AWS_SECRET_ACCESS_KEY="[Get from cert file]"
